@@ -1,8 +1,2 @@
 builders:
-  default: paketobuildpacks/builder:base
-  base: paketobuildpacks/builder:base
-  full: paketobuildpacks/builder:full
-
-buildpacks:
-  - paketo-buildpacks/go-dist
-  - ghcr.io/boson-project/go-function-buildpack:tip
+  default: quay.io/boson/faas-go-builder
