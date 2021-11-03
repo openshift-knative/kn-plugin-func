@@ -42,6 +42,8 @@ git fetch openshift main
 git checkout openshift/main $custom_files
 ./hack/update-pkger.sh
 git add $custom_files pkged.go
+# remove stray manifest.yaml
+git rm templates/typescript/cloudevents/manifest.yaml
 git commit -m "${openshift_files_msg}"
 
 git push -f openshift release-next
