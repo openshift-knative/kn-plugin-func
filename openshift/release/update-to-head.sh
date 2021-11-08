@@ -40,9 +40,6 @@ git checkout upstream/main -B release-next
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
 git checkout openshift/main $custom_files
-# remove stray manifest.yaml
-git rm templates/go/cloudevents/manifest.yaml
-git rm templates/typescript/cloudevents/manifest.yaml
 ./hack/update-pkger.sh
 git add $custom_files pkged.go
 git commit -m "${openshift_files_msg}"
