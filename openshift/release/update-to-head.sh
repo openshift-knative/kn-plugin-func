@@ -42,6 +42,9 @@ git fetch openshift main
 git checkout openshift/main $custom_files
 ./hack/update-pkger.sh
 git add $custom_files pkged.go
+
+# Remove all unsupported runtimes
+git rm -rf templates/go templates/python templates/quarkus templates/rust templates/springboot
 git commit -m "${openshift_files_msg}"
 
 git push -f openshift release-next
