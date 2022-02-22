@@ -40,7 +40,7 @@ git checkout upstream/main -B release-next
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
 git checkout openshift/main $custom_files
-./hack/update-pkger.sh
+make pkged.go
 git add $custom_files pkged.go
 git commit -m "${openshift_files_msg}"
 
