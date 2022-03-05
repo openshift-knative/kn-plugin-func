@@ -39,6 +39,11 @@ git checkout upstream/main -B release-next
 
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
+
+git show openshift/main:patches/internal-registry.patch > internal-registry.patch
+git am internal-registry.patch
+rm -fr internal-registry.patch
+
 git checkout openshift/main $custom_files
 make zz_filesystem_generated.go
 git add $custom_files zz_filesystem_generated.go
