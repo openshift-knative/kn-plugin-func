@@ -4,7 +4,9 @@
 package function_test
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -352,4 +354,15 @@ func TestRepositories_Missing(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestGitVersion(t *testing.T) {
+	cmd := exec.Command("git", "version")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatal(err)
+	}
+	version := string(out)
+	t.Log("version: ", version)
+	fmt.Fprintf(os.Stderr, "\n\n###: %s\n\n", version)
 }
