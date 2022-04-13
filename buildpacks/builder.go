@@ -22,8 +22,8 @@ import (
 
 // DefaultBuilderImages for Pack builders indexed by Runtime Language
 var DefaultBuilderImages = map[string]string{
-	"node": "gcr.io/paketo-buildpacks/builder:base",
-	"go":   "gcr.io/paketo-buildpacks/builder:base",
+	"node": "quay.io/boson/faas-nodejs-builder",
+	"go":   "quay.io/boson/faas-go-builder",
 }
 
 //Builder holds the configuration that will be passed to
