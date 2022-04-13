@@ -121,7 +121,7 @@ func run(t *testing.T, bin string, prefix []string, suffix ...string) string {
 	cmd.Stdout = io.MultiWriter(os.Stdout, &stdout)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		t.Fatal(err)
+		t.Fail() // Mark as failed but continue such that caller can print output if desired
 	}
 	return stdout.String()
 }

@@ -45,6 +45,7 @@ func TestBuild_S2I(t *testing.T) {
 	run(t, bin, prefix, "create", "-v", "--language=node", cwd)
 	output := run(t, bin, prefix, "build", "-v", "--builder=s2i", "--registry", GetRegistry())
 	if !strings.Contains(output, "Function image built:") {
+		t.Log(output)
 		t.Fatal("image not built")
 	}
 }
