@@ -1,2 +1,0 @@
-builders:
-  default: quay.io/boson/faas-nodejs-builder
