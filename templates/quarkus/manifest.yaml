@@ -1,7 +1,3 @@
-builders:
-  default: quay.io/boson/faas-jvm-builder:latest
-  jvm: quay.io/boson/faas-jvm-builder:latest
-  native: quay.io/boson/faas-quarkus-native-builder:latest
 buildEnvs:
   - name: MAVEN_S2I_ARTIFACT_DIRS
     value: target
