@@ -40,6 +40,11 @@ git checkout upstream/main -B release-next
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
 git checkout openshift/main $custom_files
+
+# Apply midstream patches
+git apply openshift/patches/*
+git add .
+
 make zz_filesystem_generated.go
 git add $custom_files zz_filesystem_generated.go
 git commit -m "${openshift_files_msg}"
