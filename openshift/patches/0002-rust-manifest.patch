@@ -1,0 +1,8 @@
+diff --git a/templates/rust/manifest.yaml b/templates/rust/manifest.yaml
+deleted file mode 100644
+index 1bae3110..00000000
+--- a/templates/rust/manifest.yaml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-buildpacks:
+-  - docker.io/paketocommunity/rust
