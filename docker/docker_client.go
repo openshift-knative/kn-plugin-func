@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -117,34 +118,60 @@ func newClientWithPodmanService() (dockerClient client.CommonAPIClient, dockerHo
 	dockerHost = fmt.Sprintf("unix://%s", podmanSocket)
 
 	cmd := exec.Command("podman", "system", "service", dockerHost, "--time=0")
+
+	outBuff := bytes.Buffer{}
+	cmd.Stdout = &outBuff
+	cmd.Stderr = &outBuff
+
 	err = cmd.Start()
 	if err != nil {
 		return
 	}
 
+	waitErrCh := make(chan error)
+	go func() {
+		e := cmd.Wait()
+		for {
+			waitErrCh <- e
+		}
+	}()
+
 	dockerClient, err = client.NewClientWithOpts(client.FromEnv, client.WithHost(dockerHost), client.WithAPIVersionNegotiation())
 	stopPodmanService := func() {
 		_ = cmd.Process.Signal(syscall.SIGTERM)
 		_ = os.RemoveAll(tmpDir)
+
+		select {
+		case <-waitErrCh:
+			return
+		case <-time.After(time.Second * 1):
+			_ = cmd.Process.Signal(syscall.SIGKILL)
+		}
 	}
 	dockerClient = clientWithAdditionalCleanup{
 		CommonAPIClient: dockerClient,
 		cleanUp:         stopPodmanService,
 	}
 
-	podmanServiceRunning := false
-	// give a time to podman to start
-	for i := 0; i < 40; i++ {
-		if _, e := dockerClient.Ping(context.Background()); e == nil {
-			podmanServiceRunning = true
-			break
+	svcUpCh := make(chan struct{})
+	go func() {
+		// give a time to podman to start
+		for i := 0; i < 40; i++ {
+			if _, e := dockerClient.Ping(context.Background()); e == nil {
+				svcUpCh <- struct{}{}
+			}
+			time.Sleep(time.Millisecond * 250)
 		}
-		time.Sleep(time.Millisecond * 250)
-	}
+	}()
 
-	if !podmanServiceRunning {
+	select {
+	case <-svcUpCh:
+		return
+	case <-time.After(time.Second * 10):
 		stopPodmanService()
-		err = errors.New("failed to start podman service")
+		err = errors.New("the podman service has not come up in time")
+	case err = <-waitErrCh:
+		err = fmt.Errorf("failed to start the podman service (cmd out: %q): %w", outBuff.String(), err)
 	}
 
 	return

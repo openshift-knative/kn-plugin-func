@@ -21,7 +21,7 @@ func TestNewDockerClientWithAutomaticPodman(t *testing.T) {
 
 	dockerClient, _, err := docker.NewClient("unix:///var/run/nonexistent.sock")
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer dockerClient.Close()
 
