@@ -21,13 +21,13 @@ import (
 
 // DefaultBuilderImages for Pack builders indexed by Runtime Language
 var DefaultBuilderImages = map[string]string{
-	"node":       "quay.io/boson/faas-nodejs-builder",
-	"typescript": "quay.io/boson/faas-nodejs-builder",
-	"go":         "quay.io/boson/faas-go-builder",
-	"python":     "quay.io/boson/faas-python-builder",
-	"quarkus":    "quay.io/boson/faas-jvm-builder",
-	"rust":       "quay.io/boson/faas-rust-builder",
-	"springboot": "quay.io/boson/faas-jvm-builder",
+	"node":       "gcr.io/paketo-buildpacks/builder:base",
+	"typescript": "gcr.io/paketo-buildpacks/builder:base",
+	"go":         "gcr.io/paketo-buildpacks/builder:base",
+	"python":     "gcr.io/paketo-buildpacks/builder:base",
+	"quarkus":    "gcr.io/paketo-buildpacks/builder:base",
+	"rust":       "gcr.io/paketo-buildpacks/builder:base",
+	"springboot": "gcr.io/paketo-buildpacks/builder:base",
 }
 
 //Builder holds the configuration that will be passed to
