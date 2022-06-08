@@ -1,5 +1,0 @@
-buildEnvs:
-  - name: MAVEN_S2I_ARTIFACT_DIRS
-    value: target
-  - name: S2I_SOURCE_DEPLOYMENTS_FILTER
-    value: "*-runner.jar lib"

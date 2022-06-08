@@ -27,7 +27,6 @@ REPO_NAME=$(basename $(git rev-parse --show-toplevel))
 # Custom files
 custom_files=$(cat <<EOT | tr '\n' ' '
 openshift
-templates
 EOT
 )
 openshift_files_msg=":open_file_folder: update OpenShift specific files"
