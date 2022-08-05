@@ -1,0 +1,13 @@
+diff --git a/function_builder.go b/function_builder.go
+index 38c6dc98..b6b34347 100644
+--- a/function_builder.go
++++ b/function_builder.go
+@@ -7,7 +7,7 @@ import (
+ const (
+ 	BuilderPack    = "pack"
+ 	BuilderS2i     = "s2i"
+-	DefaultBuilder = BuilderPack
++	DefaultBuilder = BuilderS2i
+ )
+ 
+ func AllBuilders() []string {
