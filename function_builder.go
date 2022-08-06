@@ -7,7 +7,7 @@ import (
 const (
 	BuilderPack    = "pack"
 	BuilderS2i     = "s2i"
-	DefaultBuilder = BuilderPack
+	DefaultBuilder = BuilderS2i
 )
 
 func AllBuilders() []string {
