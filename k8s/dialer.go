@@ -11,11 +11,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Masterminds/semver"
 	coreV1 "k8s.io/api/core/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -24,7 +27,7 @@ import (
 )
 
 const (
-	socatImage = "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root"
+	socatImage = "registry.redhat.io/openshift-serverless-1/kn-plugin-func-rhel8:latest"
 )
 
 // NewInClusterDialer creates context dialer that will dial TCP connections via POD running in k8s cluster.
@@ -156,6 +159,7 @@ func (c *contextDialer) startDialerPod(ctx context.Context) (err error) {
 						AllowPrivilegeEscalation: new(bool),
 						RunAsNonRoot:             &runAsNonRoot,
 						Capabilities:             &coreV1.Capabilities{Drop: []coreV1.Capability{"ALL"}},
+						SeccompProfile:           getSeccompProfile(ctx, c.restConf),
 					},
 				},
 			},
@@ -406,6 +410,43 @@ func (l *lazyInitInClusterDialer) DialContext(ctx context.Context, network strin
 func (l *lazyInitInClusterDialer) Close() error {
 	if l.contextDialer != nil {
 		return l.contextDialer.Close()
+	}
+	return nil
+}
+
+func getSeccompProfile(ctx context.Context, config *restclient.Config) (profile *coreV1.SeccompProfile) {
+	defer func() {
+		if r := recover(); r != nil {
+			profile = nil
+		}
+	}()
+
+	dynClient, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil
+	}
+
+	clusterOperatorResource := schema.GroupVersionResource{
+		Group:    "config.openshift.io",
+		Version:  "v1",
+		Resource: "clusteroperators",
+	}
+
+	openShiftAPIServer, err := dynClient.
+		Resource(clusterOperatorResource).
+		Get(ctx, "openshift-apiserver", metaV1.GetOptions{})
+
+	if err != nil {
+		return nil
+	}
+
+	serverVersion := openShiftAPIServer.Object["status"].(map[string]interface{})["versions"].([]interface{})[0].(map[string]interface{})["version"].(string)
+	v, err := semver.NewVersion(serverVersion)
+	if err != nil {
+		return nil
+	}
+	if v.Compare(semver.MustParse("4.11")) >= 0 {
+		return &coreV1.SeccompProfile{Type: coreV1.SeccompProfileTypeRuntimeDefault}
 	}
 	return nil
 }
