@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package stats
+package pkg
 
 import (
 	"sync"
@@ -24,6 +24,7 @@ import (
 )
 
 // ReqEvent represents either an incoming or closed request.
+// +k8s:deepcopy-gen=false
 type ReqEvent struct {
 	// Time is the time the request event happened.
 	Time time.Time
@@ -54,6 +55,7 @@ func NewRequestStats(startedAt time.Time) *RequestStats {
 }
 
 // RequestStats collects statistics about requests as they flow in and out of the system.
+// +k8s:deepcopy-gen=false
 type RequestStats struct {
 	mux sync.Mutex
 
@@ -70,6 +72,7 @@ type RequestStats struct {
 
 // RequestStatsReport are the metrics reported from the the request stats collector
 // at a given time.
+// +k8s:deepcopy-gen=false
 type RequestStatsReport struct {
 	// AverageConcurrency is the average concurrency over the reporting timeframe.
 	// This is calculated via the utilization at a given concurrency. For example:

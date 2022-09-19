@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"strings"
 
+	networkingpkg "knative.dev/networking/pkg"
 	"knative.dev/networking/pkg/apis/networking"
 	netv1alpha1 "knative.dev/networking/pkg/apis/networking/v1alpha1"
-	netcfg "knative.dev/networking/pkg/config"
 	"knative.dev/pkg/logging"
 )
 
 // GetHTTPOption get http-protocol from resource annotations if not, get it from configmap config-network
-func GetHTTPOption(ctx context.Context, networkConfig *netcfg.Config, annotations map[string]string) (netv1alpha1.HTTPOption, error) {
+func GetHTTPOption(ctx context.Context, networkConfig *networkingpkg.Config, annotations map[string]string) (netv1alpha1.HTTPOption, error) {
 	// Get HTTPOption via annotations.
 	if len(annotations) != 0 && networking.GetHTTPProtocol(annotations) != "" {
 		protocol := strings.ToLower(networking.GetHTTPProtocol(annotations))
-		switch netcfg.HTTPProtocol(protocol) {
-		case netcfg.HTTPEnabled:
+		switch networkingpkg.HTTPProtocol(protocol) {
+		case networkingpkg.HTTPEnabled:
 			return netv1alpha1.HTTPOptionEnabled, nil
-		case netcfg.HTTPRedirected:
+		case networkingpkg.HTTPRedirected:
 			return netv1alpha1.HTTPOptionRedirected, nil
 		default:
 			return "", fmt.Errorf("incorrect http-protocol annotation: " + protocol)
@@ -31,12 +31,12 @@ func GetHTTPOption(ctx context.Context, networkConfig *netcfg.Config, annotation
 
 	// Get HTTPOption via config-network.
 	switch httpProtocol := networkConfig.HTTPProtocol; httpProtocol {
-	case netcfg.HTTPEnabled:
+	case networkingpkg.HTTPEnabled:
 		return netv1alpha1.HTTPOptionEnabled, nil
-	case netcfg.HTTPRedirected:
+	case networkingpkg.HTTPRedirected:
 		return netv1alpha1.HTTPOptionRedirected, nil
 	// This will be deprecated soon
-	case netcfg.HTTPDisabled:
+	case networkingpkg.HTTPDisabled:
 		logger.Warnf("http-protocol %s in config-network ConfigMap will be deprecated soon", httpProtocol)
 		return "", nil
 	default:
