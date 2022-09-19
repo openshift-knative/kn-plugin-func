@@ -231,4 +231,9 @@ replace (
 	k8s.io/api => k8s.io/api v0.23.5
 	k8s.io/apimachinery => k8s.io/apimachinery v0.23.5
 	k8s.io/client-go => k8s.io/client-go v0.23.5
+	// Knative 1.4 deps
+	knative.dev/eventing => knative.dev/eventing v0.31.2
+	knative.dev/networking => knative.dev/networking v0.0.0-20220412163509-1145ec58c8be
+	knative.dev/pkg => knative.dev/pkg v0.0.0-20220412134708-e325df66cb51
+	knative.dev/serving => knative.dev/serving v0.31.0
 )

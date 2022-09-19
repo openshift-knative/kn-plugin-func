@@ -22,9 +22,6 @@ const (
 	// GroupName is the name for the networking API group.
 	GroupName = "networking.internal.knative.dev"
 
-	// CertifcateUIDLabelKey is used to specify a label selector for informers listing ingress secrets.
-	CertificateUIDLabelKey = GroupName + "/certificate-uid"
-
 	// IngressLabelKey is the label key attached to underlying network programming
 	// resources to indicate which Ingress triggered their creation.
 	IngressLabelKey = GroupName + "/ingress"
@@ -107,12 +104,6 @@ const (
 	// WildcardCertDomainLabelKey is the label key attached to a certificate to indicate the
 	// domain for which it was issued.
 	WildcardCertDomainLabelKey = PublicGroupName + "/wildcardDomain"
-
-	// VisibilityLabelKey is the label to indicate visibility of Route
-	// and KServices.  It can be an annotation too but since users are
-	// already using labels for domain, it probably best to keep this
-	// consistent.
-	VisibilityLabelKey = PublicGroupName + "/visibility"
 )
 
 // Pseudo-constants

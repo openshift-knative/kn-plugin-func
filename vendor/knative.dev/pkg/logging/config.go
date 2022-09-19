@@ -17,7 +17,6 @@ limitations under the License.
 package logging
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -75,14 +74,15 @@ func NewLogger(configJSON string, levelOverride string, opts ...zap.Option) (*za
 }
 
 func enrichLoggerWithCommitID(logger *zap.Logger) *zap.SugaredLogger {
-	revision := changeset.Get()
-	if revision == changeset.Unknown {
-		logger.Info("Unable to read vcs.revision from binary")
+	commitID, err := changeset.Get()
+	if err != nil {
+		logger.Info("Fetch GitHub commit ID from kodata failed", zap.Error(err))
 		return logger.Sugar()
 	}
 
-	// Enrich logs with the components git revision.
-	return logger.With(zap.String(logkey.Commit, revision)).Sugar()
+	// Enrich logs with GitHub commit ID.
+	return logger.With(zap.String(logkey.GitHubCommitID, commitID)).Sugar()
+
 }
 
 // NewLoggerFromConfig creates a logger using the provided Config
@@ -113,8 +113,8 @@ func newLoggerFromConfig(configJSON, levelOverride string, opts []zap.Option) (*
 		return nil, zap.AtomicLevel{}, err
 	}
 
-	logger.Debug("Successfully created the logger.")
-	logger.Debug("Logging level set to: " + loggingCfg.Level.String())
+	logger.Info("Successfully created the logger.")
+	logger.Info("Logging level set to: " + loggingCfg.Level.String())
 	return logger, loggingCfg.Level, nil
 }
 
@@ -134,22 +134,6 @@ func zapConfigFromJSON(configJSON string) (*zap.Config, error) {
 type Config struct {
 	LoggingConfig string
 	LoggingLevel  map[string]zapcore.Level
-}
-
-type lcfg struct{}
-
-// WithConfig associates a logging configuration with the context.
-func WithConfig(ctx context.Context, cfg *Config) context.Context {
-	return context.WithValue(ctx, lcfg{}, cfg)
-}
-
-// GetConfig gets the logging config from the provided context.
-func GetConfig(ctx context.Context) *Config {
-	untyped := ctx.Value(lcfg{})
-	if untyped == nil {
-		return nil
-	}
-	return untyped.(*Config)
 }
 
 func defaultConfig() *Config {

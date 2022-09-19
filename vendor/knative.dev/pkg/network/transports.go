@@ -55,9 +55,6 @@ var backOffTemplate = wait.Backoff{
 	Steps:    15,
 }
 
-// ErrTimeoutDialing when the timeout is reached after set amount of time.
-var ErrTimeoutDialing = errors.New("timed out dialing")
-
 // DialWithBackOff executes `net.Dialer.DialContext()` with exponentially increasing
 // dial timeouts. In addition it sleeps with random jitter between tries.
 var DialWithBackOff = NewBackoffDialer(backOffTemplate)
@@ -113,7 +110,7 @@ func dialBackOffHelper(ctx context.Context, network, address string, bo wait.Bac
 		return c, nil
 	}
 	elapsed := time.Since(start)
-	return nil, fmt.Errorf("%w %s after %.2fs", ErrTimeoutDialing, address, elapsed.Seconds())
+	return nil, fmt.Errorf("timed out dialing after %.2fs", elapsed.Seconds())
 }
 
 func newHTTPTransport(disableKeepAlives, disableCompression bool, maxIdle, maxIdlePerHost int) http.RoundTripper {
