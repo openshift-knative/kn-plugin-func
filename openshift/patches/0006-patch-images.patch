@@ -18,18 +18,18 @@ index 518d3869..b980ac48 100644
  	inClusterAddr, inClusterCA := startServer(t, inClusterHostName)
  	localhostAddr, localhostCA := startServer(t, "localhost")
 diff --git a/k8s/dialer.go b/k8s/dialer.go
-index 306e5b03..6dcf0b20 100644
+index 925b07ed..93be36a0 100644
 --- a/k8s/dialer.go
 +++ b/k8s/dialer.go
-@@ -24,7 +24,7 @@ import (
+@@ -23,7 +23,7 @@ import (
+ 	"k8s.io/client-go/tools/remotecommand"
  )
  
- const (
--	socatImage = "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root"
-+	socatImage = "registry.redhat.io/openshift-serverless-1/kn-plugin-func-rhel8:latest"
- )
+-var socatImage = "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root"
++var socatImage = "registry.redhat.io/openshift-serverless-1/kn-plugin-func-rhel8:latest"
  
  // NewInClusterDialer creates context dialer that will dial TCP connections via POD running in k8s cluster.
+ // This is useful when accessing k8s services that are not exposed outside cluster (e.g. openshift image registry).
 diff --git a/k8s/dialer_test.go b/k8s/dialer_test.go
 index c30d6166..815e78d4 100644
 --- a/k8s/dialer_test.go
