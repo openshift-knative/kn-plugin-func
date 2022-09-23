@@ -1,18 +1,12 @@
 diff --git a/http/transport_test.go b/http/transport_test.go
-index 518d3869..b980ac48 100644
+index 518d3869..b85543d7 100644
 --- a/http/transport_test.go
 +++ b/http/transport_test.go
-@@ -15,11 +15,14 @@ import (
- 	"time"
- 
- 	fnhttp "knative.dev/kn-plugin-func/http"
-+	. "knative.dev/kn-plugin-func/testing"
- )
- 
+@@ -20,6 +20,8 @@ import (
  const inClusterHostName = "a-testing-service.a-testing-namespace.svc"
  
  func TestCustomCA(t *testing.T) {
-+	defer WithEnvVar(t, "SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")()
++	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
 +
  	var err error
  	inClusterAddr, inClusterCA := startServer(t, inClusterHostName)
@@ -31,48 +25,36 @@ index 925b07ed..93be36a0 100644
  // NewInClusterDialer creates context dialer that will dial TCP connections via POD running in k8s cluster.
  // This is useful when accessing k8s services that are not exposed outside cluster (e.g. openshift image registry).
 diff --git a/k8s/dialer_test.go b/k8s/dialer_test.go
-index c30d6166..815e78d4 100644
+index c30d6166..c42514a6 100644
 --- a/k8s/dialer_test.go
 +++ b/k8s/dialer_test.go
-@@ -16,6 +16,7 @@ import (
- 	"time"
- 
- 	"knative.dev/kn-plugin-func/k8s"
-+	. "knative.dev/kn-plugin-func/testing"
- 
- 	coreV1 "k8s.io/api/core/v1"
- 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-@@ -24,6 +25,8 @@ import (
+@@ -24,6 +24,8 @@ import (
  )
  
  func TestDialInClusterService(t *testing.T) {
-+	defer WithEnvVar(t, "SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")()
++	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
 +
  	var err error
  	var ctx = context.Background()
  
-@@ -158,6 +161,8 @@ func TestDialInClusterService(t *testing.T) {
+@@ -158,6 +160,8 @@ func TestDialInClusterService(t *testing.T) {
  }
  
  func TestDialUnreachable(t *testing.T) {
-+	defer WithEnvVar(t, "SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")()
++	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
 +
  	var ctx = context.Background()
  
  	dialer, err := k8s.NewInClusterDialer(ctx)
 diff --git a/openshift/openshift_test.go b/openshift/openshift_test.go
-index 2635fdf3..d168fae8 100644
+index 2635fdf3..3dbf165e 100644
 --- a/openshift/openshift_test.go
 +++ b/openshift/openshift_test.go
-@@ -10,9 +10,12 @@ import (
- 
- 	fnhttp "knative.dev/kn-plugin-func/http"
- 	"knative.dev/kn-plugin-func/openshift"
-+	. "knative.dev/kn-plugin-func/testing"
+@@ -13,6 +13,8 @@ import (
  )
  
  func TestRoundTripper(t *testing.T) {
-+	defer WithEnvVar(t, "SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")()
++	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
 +
  	if !openshift.IsOpenShift() {
  		t.Skip("The cluster in not an instance of OpenShift.")
