@@ -11,7 +11,7 @@ jobs:
     name: E2E Test
     strategy:
       matrix:
-        runtime: ["go", "python", "quarkus", "springboot", "typescript"]
+        runtime: ["quarkus", "typescript"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
