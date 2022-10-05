@@ -11,14 +11,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Masterminds/semver"
 	coreV1 "k8s.io/api/core/v1"
 	metaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/watch"
-	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -137,7 +134,6 @@ func (c *contextDialer) startDialerPod(ctx context.Context) (err error) {
 		img = i
 	}
 
-	runAsNonRoot := true
 	pod := &coreV1.Pod{
 		ObjectMeta: metaV1.ObjectMeta{
 			Name:        c.podName,
@@ -147,18 +143,12 @@ func (c *contextDialer) startDialerPod(ctx context.Context) (err error) {
 		Spec: coreV1.PodSpec{
 			Containers: []coreV1.Container{
 				{
-					Name:      c.podName,
-					Image:     img,
-					Stdin:     true,
-					StdinOnce: true,
-					Command:   []string{"socat", "-u", "-", "OPEN:/dev/null"},
-					SecurityContext: &coreV1.SecurityContext{
-						Privileged:               new(bool),
-						AllowPrivilegeEscalation: new(bool),
-						RunAsNonRoot:             &runAsNonRoot,
-						Capabilities:             &coreV1.Capabilities{Drop: []coreV1.Capability{"ALL"}},
-						SeccompProfile:           getSeccompProfile(ctx, c.restConf),
-					},
+					Name:            c.podName,
+					Image:           img,
+					Stdin:           true,
+					StdinOnce:       true,
+					Command:         []string{"socat", "-u", "-", "OPEN:/dev/null"},
+					SecurityContext: defaultSecurityContext(ctx, c.restConf),
 				},
 			},
 			DNSPolicy:     coreV1.DNSClusterFirst,
@@ -406,43 +396,6 @@ func (l *lazyInitInClusterDialer) DialContext(ctx context.Context, network strin
 func (l *lazyInitInClusterDialer) Close() error {
 	if l.contextDialer != nil {
 		return l.contextDialer.Close()
-	}
-	return nil
-}
-
-func getSeccompProfile(ctx context.Context, config *restclient.Config) (profile *coreV1.SeccompProfile) {
-	defer func() {
-		if r := recover(); r != nil {
-			profile = nil
-		}
-	}()
-
-	dynClient, err := dynamic.NewForConfig(config)
-	if err != nil {
-		return nil
-	}
-
-	clusterOperatorResource := schema.GroupVersionResource{
-		Group:    "config.openshift.io",
-		Version:  "v1",
-		Resource: "clusteroperators",
-	}
-
-	openShiftAPIServer, err := dynClient.
-		Resource(clusterOperatorResource).
-		Get(ctx, "openshift-apiserver", metaV1.GetOptions{})
-
-	if err != nil {
-		return nil
-	}
-
-	serverVersion := openShiftAPIServer.Object["status"].(map[string]interface{})["versions"].([]interface{})[0].(map[string]interface{})["version"].(string)
-	v, err := semver.NewVersion(serverVersion)
-	if err != nil {
-		return nil
-	}
-	if v.Compare(semver.MustParse("4.11")) >= 0 {
-		return &coreV1.SeccompProfile{Type: coreV1.SeccompProfileTypeRuntimeDefault}
 	}
 	return nil
 }
