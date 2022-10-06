@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	socatImage = "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root"
+	SocatImage = "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root"
 )
 
 // NewInClusterDialer creates context dialer that will dial TCP connections via POD running in k8s cluster.
@@ -144,7 +144,7 @@ func (c *contextDialer) startDialerPod(ctx context.Context) (err error) {
 			Containers: []coreV1.Container{
 				{
 					Name:      c.podName,
-					Image:     socatImage,
+					Image:     SocatImage,
 					Stdin:     true,
 					StdinOnce: true,
 					Command:   []string{"socat", "-u", "-", "OPEN:/dev/null"},
