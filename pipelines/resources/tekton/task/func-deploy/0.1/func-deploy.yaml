@@ -24,7 +24,16 @@ spec:
       description: The workspace containing the function project
   steps:
   - name: func-deploy
-    image: "registry.redhat.io/openshift-serverless-1/kn-plugin-func-rhel8:latest"
-    script: |
-      export FUNC_IMAGE="$(params.image)"
-      func deploy --verbose --build=false --push=false --path=$(params.path)
+    image: "registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:51e683fc3d668c39c6100512492e7fd7ca8f3f910886b4302960e825936d7cfb" 
+    env:
+      - name: FUNC_IMAGE
+        value: "$(params.image)"
+    command:
+      - /ko-app/kn
+    args:
+      - func
+      - deploy
+      - --verbose
+      - --build=false
+      - --push=false
+      - --path=$(params.path)
