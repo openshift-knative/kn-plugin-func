@@ -59,19 +59,6 @@ index 2635fdf3..3dbf165e 100644
  	if !openshift.IsOpenShift() {
  		t.Skip("The cluster in not an instance of OpenShift.")
  		return
-diff --git a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
-index b5882b20..3f257c76 100644
---- a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
-+++ b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
-@@ -24,7 +24,7 @@ spec:
-       description: The workspace containing the function project
-   steps:
-   - name: func-deploy
--    image: "ghcr.io/knative-sandbox/kn-plugin-func/func:latest"
-+    image: "registry.redhat.io/openshift-serverless-1/kn-plugin-func-rhel8:latest"
-     script: |
-       export FUNC_IMAGE="$(params.image)"
-       func deploy --verbose --build=false --push=false --path=$(params.path)
 diff --git a/test/e2e_extended_tests.sh b/test/e2e_extended_tests.sh
 index c4d83027..d890e409 100755
 --- a/test/e2e_extended_tests.sh

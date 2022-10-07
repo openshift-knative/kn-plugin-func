@@ -1,0 +1,36 @@
+diff --git a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+index b5882b20..553da5f5 100644
+--- a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
++++ b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+@@ -11,7 +11,7 @@ metadata:
+     tekton.dev/platforms: "linux/amd64"
+ spec:
+   description: >-
+-    This Task performs a deploy operation using the Knative `func` CLI
++    This Task performs a deploy operation using the Knative `func` CLI pulled from Openshift Serverless Operator
+   params:
+   - name: path
+     description: Path to the function project
+@@ -24,7 +24,20 @@ spec:
+       description: The workspace containing the function project
+   steps:
+   - name: func-deploy
+-    image: "ghcr.io/knative-sandbox/kn-plugin-func/func:latest"
++    image: "registry.access.redhat.com/ubi8/ubi"
+     script: |
++      arch="amd64"
++      machine=$(uname -m)
++      case ${machine} in
++          ppc|ppc64)
++              arch="ppc64le"
++              ;;
++          s390|s390x)
++              arch="s390x"
++      esac
++      kn_archive="kn-linux-${arch}.tar.gz"
++      curl -L "http://knative-openshift-metrics-3.openshift-serverless.svc:8080/${kn_archive}" | tar -zxvf -
++      ./kn version
++      ./kn func version
+       export FUNC_IMAGE="$(params.image)"
+-      func deploy --verbose --build=false --push=false --path=$(params.path)
++      ./kn func deploy --verbose --build=false --push=false --path=$(params.path)
