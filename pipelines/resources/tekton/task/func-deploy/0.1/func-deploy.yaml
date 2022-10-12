@@ -24,7 +24,7 @@ spec:
       description: The workspace containing the function project
   steps:
   - name: func-deploy
-    image: "registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:51e683fc3d668c39c6100512492e7fd7ca8f3f910886b4302960e825936d7cfb" 
+    image: "registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:8ef9539d11a14d19bdf2fa86704adcf9d8c59d613a4ecbb19c0b2475f33f4fa1" 
     env:
       - name: FUNC_IMAGE
         value: "$(params.image)"
