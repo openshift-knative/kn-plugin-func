@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	pplnv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+
+	"knative.dev/kn-plugin-func/openshift"
 )
 
 const (
@@ -13,10 +15,16 @@ const (
 )
 
 func taskFetchSources() pplnv1beta1.PipelineTask {
+	var taskKind = pplnv1beta1.NamespacedTaskKind
+	if openshift.IsOpenShift() {
+		taskKind = pplnv1beta1.ClusterTaskKind
+	}
+
 	return pplnv1beta1.PipelineTask{
 		Name: taskNameFetchSources,
 		TaskRef: &pplnv1beta1.TaskRef{
 			Name: "git-clone",
+			Kind: taskKind,
 		},
 		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{{
 			Name:      "output",
