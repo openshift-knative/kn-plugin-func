@@ -1,5 +1,5 @@
 diff --git a/.github/workflows/test-e2e-runtime.yaml b/.github/workflows/test-e2e-runtime.yaml
-index b6a6c485..e24eb458 100644
+index 30fe7f6e..3560dc37 100644
 --- a/.github/workflows/test-e2e-runtime.yaml
 +++ b/.github/workflows/test-e2e-runtime.yaml
 @@ -11,7 +11,7 @@ jobs:
@@ -10,4 +10,4 @@ index b6a6c485..e24eb458 100644
 +        runtime: ["quarkus", "typescript"]
      runs-on: ubuntu-latest
      steps:
-       - uses: actions/checkout@v2
+       - uses: actions/checkout@v3
