@@ -20,6 +20,8 @@ import (
 const inClusterHostName = "a-testing-service.a-testing-namespace.svc"
 
 func TestCustomCA(t *testing.T) {
+	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
+
 	var err error
 	inClusterAddr, inClusterCA := startServer(t, inClusterHostName)
 	localhostAddr, localhostCA := startServer(t, "localhost")

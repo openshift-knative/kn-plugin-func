@@ -13,6 +13,8 @@ import (
 )
 
 func TestRoundTripper(t *testing.T) {
+	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
+
 	if !openshift.IsOpenShift() {
 		t.Skip("The cluster in not an instance of OpenShift.")
 		return
