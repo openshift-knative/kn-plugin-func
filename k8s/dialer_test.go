@@ -24,6 +24,8 @@ import (
 )
 
 func TestDialInClusterService(t *testing.T) {
+	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
+
 	var err error
 	var ctx = context.Background()
 
@@ -158,6 +160,8 @@ func TestDialInClusterService(t *testing.T) {
 }
 
 func TestDialUnreachable(t *testing.T) {
+	t.Setenv("SOCAT_IMAGE", "quay.io/boson/alpine-socat:1.7.4.3-r1-non-root")
+
 	var ctx = context.Background()
 
 	dialer, err := k8s.NewInClusterDialer(ctx)
