@@ -7,7 +7,7 @@ index c3a611fe..61b47795 100644
  
  	pplnv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 +
-+	"knative.dev/kn-plugin-func/openshift"
++	"knative.dev/func/openshift"
  )
  
  const (
