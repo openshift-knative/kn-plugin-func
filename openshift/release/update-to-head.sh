@@ -41,7 +41,14 @@ git fetch openshift main
 git checkout openshift/main $custom_files
 
 # Apply midstream patches
-git apply openshift/patches/*
+if [[ -d openshift/patches ]]; then
+  git apply openshift/patches/*
+fi
+# Apply midstream overrides
+if [[ -d openshift/overrides ]]; then
+  cp -r openshift/overrides/. .
+  rm -rf openshift/overrides
+fi
 git add .
 
 make zz_filesystem_generated.go
