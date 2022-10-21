@@ -66,7 +66,7 @@ func Test_registryEquals(t *testing.T) {
 }
 
 func TestCheckAuth(t *testing.T) {
-
+	withCleanHome(t)
 	const (
 		uname        = "testuser"
 		pwd          = "testpwd"
@@ -159,6 +159,7 @@ func TestCheckAuth(t *testing.T) {
 }
 
 func TestCheckAuthEmptyCreds(t *testing.T) {
+	withCleanHome(t)
 
 	localhost, _ := startServer(t, "", "")
 	err := creds.CheckAuth(context.Background(), localhost+"/someorg/someimage:sometag", docker.Credentials{}, http.DefaultTransport)
@@ -432,6 +433,7 @@ func TestNewCredentialsProvider(t *testing.T) {
 }
 
 func TestNewCredentialsProviderEmptyCreds(t *testing.T) {
+	withCleanHome(t)
 	credentialsProvider := creds.NewCredentialsProvider(testConfigPath(t), creds.WithVerifyCredentials(func(ctx context.Context, image string, credentials docker.Credentials) error {
 		if image == "localhost:5555/someorg/someimage:sometag" && credentials == (docker.Credentials{}) {
 			return nil
