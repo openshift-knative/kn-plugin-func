@@ -1,0 +1,25 @@
+diff --git a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+index 402ed59e..99b75626 100644
+--- a/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
++++ b/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+@@ -24,7 +24,16 @@ spec:
+       description: The workspace containing the function project
+   steps:
+   - name: func-deploy
+-    image: "ghcr.io/knative/func/func:latest"
+-    script: |
+-      export FUNC_IMAGE="$(params.image)"
+-      func deploy --verbose --build=false --push=false --path=$(params.path)
++    image: "registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:8ef9539d11a14d19bdf2fa86704adcf9d8c59d613a4ecbb19c0b2475f33f4fa1"
++    env:
++      - name: FUNC_IMAGE
++        value: "$(params.image)"
++    command:
++      - /ko-app/kn
++    args:
++      - func
++      - deploy
++      - --verbose
++      - --build=false
++      - --push=false
++      - --path=$(params.path)
