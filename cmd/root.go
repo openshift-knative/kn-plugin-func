@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/client/pkg/util"
 	fn "knative.dev/func"
+	"knative.dev/func/k8s"
 )
 
 type RootCommandConfig struct {
@@ -361,7 +362,12 @@ func (v Version) StringVerbose() string {
 	if date == "" {
 		date = time.Now().Format(time.RFC3339)
 	}
-	return fmt.Sprintf("%s-%s-%s", vers, hash, date)
+	funcVersion := fmt.Sprintf("%s-%s-%s", vers, hash, date)
+	return fmt.Sprintf("Version: %s\n"+
+		"SocatImage: %s\n"+
+		"TarImage: %s", funcVersion,
+		k8s.SocatImage,
+		k8s.TarImage)
 }
 
 // surveySelectDefault returns 'value' if defined and exists in 'options'.
