@@ -16,6 +16,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/client/pkg/util"
 	fn "knative.dev/func"
+	"knative.dev/func/k8s"
 )
 
 type RootCommandConfig struct {
