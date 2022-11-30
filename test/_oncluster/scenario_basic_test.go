@@ -4,18 +4,36 @@
 package oncluster
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"gotest.tools/v3/assert"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"knative.dev/func/k8s"
 	common "knative.dev/func/test/_common"
 	e2e "knative.dev/func/test/_e2e"
 )
 
 // TestBasicUpload check if direct source upload works
 func TestBasicUpload(t *testing.T) {
+	defer func() {
+		cli, err := k8s.NewKubernetesClientset()
+		if err != nil {
+			panic(err)
+		}
+		opt := metav1.ListOptions{}
+		l, err := cli.EventsV1().Events("default").List(context.Background(), opt)
+		if err != nil {
+			panic(err)
+		}
+		for _, item := range l.Items {
+			fmt.Fprintf(os.Stderr, "event: %+v\n", item)
+		}
+	}()
 
 	var funcName = "test-func-basic-upload"
 	var funcPath = filepath.Join(t.TempDir(), funcName)
