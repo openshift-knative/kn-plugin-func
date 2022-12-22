@@ -45,7 +45,9 @@ EOF
 
   sleep 10
   oc wait subscription.operators.coreos.com/openshift-pipelines-operator-rh -n openshift-operators --for=jsonpath='{.status.state}'="AtLatestKnown" --timeout=60s
-  sleep 60
+  oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-controller"
+  oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-webhook"
+  sleep 10
 
 }
 
