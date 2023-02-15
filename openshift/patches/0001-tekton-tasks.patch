@@ -1,7 +1,7 @@
-diff --git a/pipelines/tekton/tasks.go b/pipelines/tekton/tasks.go
+diff --git a/pkg/pipelines/tekton/tasks.go b/pkg/pipelines/tekton/tasks.go
 index c3a611fe..61b47795 100644
---- a/pipelines/tekton/tasks.go
-+++ b/pipelines/tekton/tasks.go
+--- a/pkg/pipelines/tekton/tasks.go
++++ b/pkg/pipelines/tekton/tasks.go
 @@ -4,6 +4,8 @@ import (
  	"fmt"
  

@@ -1,7 +1,7 @@
-diff --git a/builders/builders.go b/builders/builders.go
+diff --git a/pkg/builders/builders.go b/pkg/builders/builders.go
 index 845e8c82..3392c0ca 100644
---- a/builders/builders.go
-+++ b/builders/builders.go
+--- a/pkg/builders/builders.go
++++ b/pkg/builders/builders.go
 @@ -15,7 +15,7 @@ import (
  const (
  	Pack    = "pack"

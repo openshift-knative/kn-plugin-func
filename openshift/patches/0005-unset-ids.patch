@@ -1,7 +1,7 @@
-diff --git a/k8s/security_context.go b/k8s/security_context.go
+diff --git a/pkg/k8s/security_context.go b/pkg/k8s/security_context.go
 index 7d2fd569..956c7623 100644
---- a/k8s/security_context.go
-+++ b/k8s/security_context.go
+--- a/pkg/k8s/security_context.go
++++ b/pkg/k8s/security_context.go
 @@ -9,14 +9,8 @@ import (
  var oneTwentyFour = semver.MustParse("1.24")
  

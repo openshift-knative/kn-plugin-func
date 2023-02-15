@@ -45,6 +45,7 @@ EOF
 
   sleep 10
   oc wait subscription.operators.coreos.com/openshift-pipelines-operator-rh -n openshift-operators --for=jsonpath='{.status.state}'="AtLatestKnown" --timeout=60s
+  sleep 10
   oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-controller"
   oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-webhook"
   sleep 10
@@ -53,9 +54,9 @@ EOF
 
 tekton_tasks() {
   echo "Creating Pipeline tasks..."
-  oc apply -f ${source_path}/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
-  oc apply -f ${source_path}/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-  oc apply -f ${source_path}/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
+  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
+  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
 }
 
 tasks_only=false
