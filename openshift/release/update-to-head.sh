@@ -51,7 +51,7 @@ if [[ -d openshift/overrides ]]; then
 fi
 git add .
 
-make zz_filesystem_generated.go
+make generate/zz_filesystem_generated.go
 git add $custom_files zz_filesystem_generated.go
 git commit -m "${openshift_files_msg}"
 
