@@ -153,7 +153,7 @@ func (p projectUpdater) walkThru(dir string, fn func(path string, f os.FileInfo)
 }
 
 func (p projectUpdater) copyFile(sourceFile string, destFile string) error {
-	_, err := os.Stat(sourceFile)
+	fi, err := os.Stat(sourceFile)
 	if err != nil {
 		return err
 	}
@@ -162,7 +162,7 @@ func (p projectUpdater) copyFile(sourceFile string, destFile string) error {
 		return err
 	}
 	defer src.Close()
-	dst, err := os.Create(destFile)
+	dst, err := os.OpenFile(destFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, fi.Mode().Perm())
 	if err != nil {
 		return err
 	}
