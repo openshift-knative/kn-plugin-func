@@ -43,13 +43,23 @@ spec:
   sourceNamespace: openshift-marketplace
 EOF
 
-  sleep 10
-  oc wait subscription.operators.coreos.com/openshift-pipelines-operator-rh -n openshift-operators --for=jsonpath='{.status.state}'="AtLatestKnown" --timeout=60s
-  sleep 10
-  oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-controller"
-  oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-webhook"
-  sleep 10
+}
 
+wait_pipelines_ready() {
+  echo "Waiting Openshift Pipeline to get ready..."
+  rc=1
+  set +e
+  for i in $(seq 5); do
+    oc wait subscription.operators.coreos.com/openshift-pipelines-operator-rh -n openshift-operators --for=jsonpath='{.status.state}'="AtLatestKnown" --timeout=60s && \
+        oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-controller" && \
+        oc wait pod --for=condition=Ready --timeout=180s -n openshift-pipelines -l "app=tekton-pipelines-webhook" && \
+        rc=0 && break || (echo "Conditions are not matched. Retrying in 10 secs" && sleep 10)
+  done
+  set -e
+  if (( $rc )); then
+    echo "Installing Openshift pipelines has failed"
+    exit 1
+  fi
 }
 
 tekton_tasks() {
@@ -68,6 +78,7 @@ fi
 
 if [ $tasks_only = false ] ; then
   openshift_pipelines
+  wait_pipelines_ready
 fi
 tekton_tasks
 
