@@ -46,7 +46,7 @@ EOF
 }
 
 wait_pipelines_ready() {
-  echo "Waiting Openshift Pipeline to get ready..."
+  echo "Waiting for Openshift Pipeline to get ready..."
   rc=1
   set +e
   for i in $(seq 5); do
