@@ -1671,6 +1671,9 @@ k8s.io/utils/net
 k8s.io/utils/pointer
 k8s.io/utils/strings/slices
 k8s.io/utils/trace
+# knative.dev/client v0.37.0
+## explicit; go 1.18
+knative.dev/client/pkg/kn/plugin
 # knative.dev/client-pkg v0.0.0-20230425201444-4f052f9ef2f2
 ## explicit; go 1.18
 knative.dev/client-pkg/pkg/apis/client
@@ -1679,7 +1682,6 @@ knative.dev/client-pkg/pkg/config
 knative.dev/client-pkg/pkg/errors
 knative.dev/client-pkg/pkg/eventing/v1
 knative.dev/client-pkg/pkg/kn/flags
-knative.dev/client-pkg/pkg/kn/plugin
 knative.dev/client-pkg/pkg/serving
 knative.dev/client-pkg/pkg/serving/v1
 knative.dev/client-pkg/pkg/util
