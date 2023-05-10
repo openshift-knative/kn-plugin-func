@@ -1,116 +1,133 @@
 diff --git a/pkg/pipelines/resources/tekton/pipelines/dev-console/0.1/pipeline.yaml b/pkg/pipelines/resources/tekton/pipelines/dev-console/0.1/pipeline.yaml
 new file mode 100644
-index 00000000..8255a9cf
+index 00000000..887d2b68
 --- /dev/null
 +++ b/pkg/pipelines/resources/tekton/pipelines/dev-console/0.1/pipeline.yaml
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,93 @@
 +apiVersion: tekton.dev/v1beta1
 +kind: Pipeline
 +metadata:
-+  annotations:
-+    operator.tekton.dev/last-applied-hash: 8353dd6bb4f36239f16fe4449f0f3442d2a045c975bc87d99481cc8bc780b636
-+    operator.tekton.dev/preserve-namespace: 'true'
-+  resourceVersion: '98767'
-+  name: s2i-nodejs
-+  uid: fa7c2f60-7665-4010-8f12-1bd2d060ae56
-+  creationTimestamp: '2023-04-05T06:08:15Z'
-+  generation: 1
-+  managedFields:
-+    - apiVersion: tekton.dev/v1beta1
-+      fieldsType: FieldsV1
-+      fieldsV1:
-+        'f:metadata':
-+          'f:annotations':
-+            .: {}
-+            'f:operator.tekton.dev/last-applied-hash': {}
-+            'f:operator.tekton.dev/preserve-namespace': {}
-+          'f:labels':
-+            .: {}
-+            'f:operator.tekton.dev/operand-name': {}
-+            'f:pipeline.openshift.io/runtime': {}
-+            'f:pipeline.openshift.io/type': {}
-+          'f:ownerReferences':
-+            .: {}
-+            'k:{"uid":"8862e0b3-9e29-45d6-be0d-e656b05573de"}': {}
-+        'f:spec':
-+          .: {}
-+          'f:params': {}
-+          'f:tasks': {}
-+          'f:workspaces': {}
-+      manager: manifestival
-+      operation: Update
-+      time: '2023-04-05T06:08:15Z'
++  name: viewer-s2i-git-pipeline
 +  namespace: openshift
-+  ownerReferences:
-+    - apiVersion: operator.tekton.dev/v1alpha1
-+      blockOwnerDeletion: true
-+      controller: true
-+      kind: TektonInstallerSet
-+      name: addon-custom-pipelinestemplate-b7cfb
-+      uid: 8862e0b3-9e29-45d6-be0d-e656b05573de
 +  labels:
-+    operator.tekton.dev/operand-name: openshift-pipelines-addons
-+    pipeline.openshift.io/runtime: nodejs
-+    pipeline.openshift.io/type: openshift
++    boson.dev/function: "true"
++    boson.dev/runtime: node
++    function.knative.dev: "true"
++    function.knative.dev/name: viewer
++    function.knative.dev/runtime: nodejs
 +spec:
 +  params:
-+    - name: APP_NAME
++    - description: Git repository that hosts the function project
++      name: GIT_REPO
 +      type: string
-+    - name: GIT_REPO
++    - description: Git revision to build
++      name: GIT_REVISION
 +      type: string
-+    - name: GIT_REVISION
-+      type: string
-+    - name: IMAGE_NAME
-+      type: string
-+    - default: .
++    - description: Path where the function project is
 +      name: PATH_CONTEXT
 +      type: string
-+    - default: 14-ubi8
-+      name: VERSION
++      default: .
++    - description: Function image name
++      name: IMAGE_NAME
 +      type: string
++    - description: Builder image to be used
++      name: BUILDER_IMAGE
++      type: string
++      default: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:16-ubi8
++    - description: Environment variables to set during build time
++      name: BUILD_ENVS
++      type: array
++      default: []
++    - default: 'image:///usr/libexec/s2i'
++      description: >-
++        URL containing the default assemble and run scripts for the builder
++        image.
++      name: s2iImageScriptsUrl
++      type: string
++  resources: []
++  workspaces:
++    - description: Directory where function source is located.
++      name: source-workspace
 +  tasks:
-+    - name: fetch-repository
++    - name: fetch-sources
 +      params:
 +        - name: url
 +          value: $(params.GIT_REPO)
 +        - name: revision
 +          value: $(params.GIT_REVISION)
-+        - name: subdirectory
-+          value: ''
-+        - name: deleteExisting
-+          value: 'true'
 +      taskRef:
 +        kind: ClusterTask
 +        name: git-clone
 +      workspaces:
 +        - name: output
-+          workspace: workspace
++          workspace: source-workspace
 +    - name: build
 +      params:
 +        - name: IMAGE
 +          value: $(params.IMAGE_NAME)
-+        - name: TLSVERIFY
-+          value: 'false'
 +        - name: PATH_CONTEXT
 +          value: $(params.PATH_CONTEXT)
-+        - name: VERSION
-+          value: $(params.VERSION)
++        - name: BUILDER_IMAGE
++          value: $(params.BUILDER_IMAGE)
++        - name: ENV_VARS
++          value:
++            - '$(params.BUILD_ENVS[*])'
++        - name: S2I_IMAGE_SCRIPTS_URL
++          value: $(params.s2iImageScriptsUrl)
 +      runAfter:
-+        - fetch-repository
++        - fetch-sources
 +      taskRef:
 +        kind: ClusterTask
-+        name: s2i-nodejs
++        name: func-s2i
 +      workspaces:
 +        - name: source
-+          workspace: workspace
++          workspace: source-workspace
 +    - name: deploy
 +      params:
-+        - name: SCRIPT
-+          value: oc rollout status dc/$(params.APP_NAME)
++        - name: path
++          value: $(workspaces.source.path)/$(params.PATH_CONTEXT)
++        - name: image
++          value: $(params.IMAGE_NAME)@$(tasks.build.results.IMAGE_DIGEST)
 +      runAfter:
 +        - build
 +      taskRef:
 +        kind: ClusterTask
-+        name: openshift-client
-+  workspaces:
-+    - name: workspace
++        name: func-deploy
++      workspaces:
++        - name: source
++          workspace: source-workspace
++  finally: []
+diff --git a/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml b/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
+index ee227cf7..ac42d639 100644
+--- a/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
++++ b/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
+@@ -1,6 +1,6 @@
+ ---
+ apiVersion: tekton.dev/v1beta1
+-kind: Task
++kind: ClusterTask
+ metadata:
+   name: func-buildpacks
+   labels:
+diff --git a/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml b/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+index c58ff568..4658f04f 100644
+--- a/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
++++ b/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
+@@ -1,5 +1,5 @@
+ apiVersion: tekton.dev/v1beta1
+-kind: Task
++kind: ClusterTask
+ metadata:
+   name: func-deploy
+   labels:
+diff --git a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
+index bf90adfa..4e655633 100644
+--- a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
++++ b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
+@@ -1,5 +1,5 @@
+ apiVersion: tekton.dev/v1beta1
+-kind: Task
++kind: ClusterTask
+ metadata:
+   name: func-s2i
+   labels:
