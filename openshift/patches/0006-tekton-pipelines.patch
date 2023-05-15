@@ -36,7 +36,7 @@ index bf90adfa..7f9fe8fc 100644
        description: Reference of the image S2I will produce.
      - name: REGISTRY
        description: The registry associated with the function image.
-+      default: .
++      default: ""
      - name: PATH_CONTEXT
        description: The location of the path to run s2i from.
        default: .
