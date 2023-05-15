@@ -1,11 +1,9 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: devconsole-function-pipeline
+  name: devconsole-nodejs-function-pipeline
   namespace: openshift
   labels:
-    boson.dev/function: "true"
-    boson.dev/runtime: node
     function.knative.dev: "true"
     function.knative.dev/name: viewer
     function.knative.dev/runtime: nodejs
