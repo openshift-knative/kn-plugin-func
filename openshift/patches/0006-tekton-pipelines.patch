@@ -22,7 +22,7 @@ index c58ff568..4658f04f 100644
    name: func-deploy
    labels:
 diff --git a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-index bf90adfa..4e655633 100644
+index bf90adfa..7f9fe8fc 100644
 --- a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
 +++ b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
 @@ -1,5 +1,5 @@
@@ -32,3 +32,21 @@ index bf90adfa..4e655633 100644
  metadata:
    name: func-s2i
    labels:
+@@ -26,6 +26,7 @@ spec:
+       description: Reference of the image S2I will produce.
+     - name: REGISTRY
+       description: The registry associated with the function image.
++      default: .
+     - name: PATH_CONTEXT
+       description: The location of the path to run s2i from.
+       default: .
+@@ -114,6 +115,9 @@ spec:
+           $(params.IMAGE) docker://$(params.IMAGE)
+
+         cat $(workspaces.source.path)/image-digest | tee /tekton/results/IMAGE_DIGEST
++        echo ""
++        echo "image-digest: "
++        cat $(workspaces.source.path)/image-digest
+       volumeMounts:
+       - name: varlibcontainers
+         mountPath: /var/lib/containers
