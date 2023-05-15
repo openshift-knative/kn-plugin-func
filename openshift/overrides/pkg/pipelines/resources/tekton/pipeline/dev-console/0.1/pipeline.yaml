@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: devconsole-nodejs-function-pipeline
+  name: devconsole-function-pipeline
   namespace: openshift
   labels:
     boson.dev/function: "true"
