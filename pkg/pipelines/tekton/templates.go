@@ -20,9 +20,9 @@ const (
 
 	// Tasks references
 	taskGitCloneRef       = "git-clone"
-	taskFuncS2iRef        = "https://raw.githubusercontent.com/knative/func/main/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml"
-	taskFuncBuildpacksRef = "https://raw.githubusercontent.com/knative/func/main/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml"
-	taskFuncDeployRef     = "https://raw.githubusercontent.com/knative/func/main/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml"
+	taskFuncS2iRef        = "https://raw.githubusercontent.com/openshift-knative/kn-plugin-func/serverless-1.29.0/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml"
+	taskFuncBuildpacksRef = "https://raw.githubusercontent.com/openshift-knative/kn-plugin-func/serverless-1.29.0/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml"
+	taskFuncDeployRef     = "https://raw.githubusercontent.com/openshift-knative/kn-plugin-func/serverless-1.29.0/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml"
 
 	// S2I related properties
 	defaultS2iImageScriptsUrl = "image:///usr/libexec/s2i"
