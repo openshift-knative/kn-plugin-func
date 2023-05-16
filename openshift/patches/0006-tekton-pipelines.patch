@@ -40,13 +40,3 @@ index bf90adfa..7f9fe8fc 100644
      - name: PATH_CONTEXT
        description: The location of the path to run s2i from.
        default: .
-@@ -114,6 +115,9 @@ spec:
-           $(params.IMAGE) docker://$(params.IMAGE)
-
-         cat $(workspaces.source.path)/image-digest | tee /tekton/results/IMAGE_DIGEST
-+        echo ""
-+        echo "image-digest: "
-+        cat $(workspaces.source.path)/image-digest
-       volumeMounts:
-       - name: varlibcontainers
-         mountPath: /var/lib/containers
