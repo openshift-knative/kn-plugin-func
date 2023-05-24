@@ -65,3 +65,20 @@ index e9cb0c47..787150ca 100644
  		},
  		RunAfter: runAfter,
  		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{
+@@ -106,11 +126,16 @@ func taskDeploy(runAfter string, referenceImageFromPreviousTaskResults bool) ppl
+ 	if referenceImageFromPreviousTaskResults {
+ 		params = append(params, pplnv1beta1.Param{Name: "image", Value: *pplnv1beta1.NewArrayOrString(fmt.Sprintf("$(params.imageName)@$(tasks.%s.results.IMAGE_DIGEST)", runAfter))})
+ 	}
++	var taskKind = pplnv1beta1.NamespacedTaskKind
++	if openshift.IsOpenShift() {
++		taskKind = pplnv1beta1.ClusterTaskKind
++	}
+
+ 	return pplnv1beta1.PipelineTask{
+ 		Name: taskNameDeploy,
+ 		TaskRef: &pplnv1beta1.TaskRef{
+ 			Name: "func-deploy",
++			Kind: taskKind,
+ 		},
+ 		RunAfter: []string{runAfter},
+ 		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{{
