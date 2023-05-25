@@ -28,57 +28,27 @@ index e9cb0c47..787150ca 100644
  		},
  		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{{
  			Name:      "output",
-@@ -30,10 +38,16 @@ func taskFetchSources() pplnv1beta1.PipelineTask {
- }
-
- func taskBuildpacks(runAfter []string) pplnv1beta1.PipelineTask {
-+	var taskKind = pplnv1beta1.NamespacedTaskKind
-+	if openshift.IsOpenShift() {
-+		taskKind = pplnv1beta1.ClusterTaskKind
-+	}
-+
- 	return pplnv1beta1.PipelineTask{
+@@ -34,6 +42,7 @@ func taskBuildpacks(runAfter []string) pplnv1beta1.PipelineTask {
  		Name: taskNameBuild,
  		TaskRef: &pplnv1beta1.TaskRef{
  			Name: "func-buildpacks",
-+			Kind: taskKind,
++			Kind: pplnv1beta1.ClusterTaskKind,
  		},
  		RunAfter: runAfter,
  		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{
-@@ -63,6 +77,11 @@ func taskBuildpacks(runAfter []string) pplnv1beta1.PipelineTask {
-
- }
- func taskS2iBuild(runAfter []string) pplnv1beta1.PipelineTask {
-+	var taskKind = pplnv1beta1.NamespacedTaskKind
-+	if openshift.IsOpenShift() {
-+		taskKind = pplnv1beta1.ClusterTaskKind
-+	}
-+
- 	params := []pplnv1beta1.Param{
- 		{Name: "IMAGE", Value: *pplnv1beta1.NewArrayOrString("$(params.imageName)")},
- 		{Name: "REGISTRY", Value: *pplnv1beta1.NewArrayOrString("$(params.registry)")},
-@@ -78,6 +97,7 @@ func taskS2iBuild(runAfter []string) pplnv1beta1.PipelineTask {
+@@ -78,6 +87,7 @@ func taskS2iBuild(runAfter []string) pplnv1beta1.PipelineTask {
  		Name: taskNameBuild,
  		TaskRef: &pplnv1beta1.TaskRef{
  			Name: "func-s2i",
-+			Kind: taskKind,
++			Kind: pplnv1beta1.ClusterTaskKind,
  		},
  		RunAfter: runAfter,
  		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{
-@@ -106,11 +126,16 @@ func taskDeploy(runAfter string, referenceImageFromPreviousTaskResults bool) ppl
- 	if referenceImageFromPreviousTaskResults {
- 		params = append(params, pplnv1beta1.Param{Name: "image", Value: *pplnv1beta1.NewArrayOrString(fmt.Sprintf("$(params.imageName)@$(tasks.%s.results.IMAGE_DIGEST)", runAfter))})
- 	}
-+	var taskKind = pplnv1beta1.NamespacedTaskKind
-+	if openshift.IsOpenShift() {
-+		taskKind = pplnv1beta1.ClusterTaskKind
-+	}
-
- 	return pplnv1beta1.PipelineTask{
+@@ -111,6 +121,7 @@ func taskDeploy(runAfter string, referenceImageFromPreviousTaskResults bool) ppl
  		Name: taskNameDeploy,
  		TaskRef: &pplnv1beta1.TaskRef{
  			Name: "func-deploy",
-+			Kind: taskKind,
++			Kind: pplnv1beta1.ClusterTaskKind,
  		},
  		RunAfter: []string{runAfter},
  		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{{
