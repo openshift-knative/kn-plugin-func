@@ -42,6 +42,7 @@ func taskBuildpacks(runAfter []string) pplnv1beta1.PipelineTask {
 		Name: taskNameBuild,
 		TaskRef: &pplnv1beta1.TaskRef{
 			Name: "func-buildpacks",
+			Kind: pplnv1beta1.ClusterTaskKind,
 		},
 		RunAfter: runAfter,
 		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{
@@ -86,6 +87,7 @@ func taskS2iBuild(runAfter []string) pplnv1beta1.PipelineTask {
 		Name: taskNameBuild,
 		TaskRef: &pplnv1beta1.TaskRef{
 			Name: "func-s2i",
+			Kind: pplnv1beta1.ClusterTaskKind,
 		},
 		RunAfter: runAfter,
 		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{
@@ -119,6 +121,7 @@ func taskDeploy(runAfter string, referenceImageFromPreviousTaskResults bool) ppl
 		Name: taskNameDeploy,
 		TaskRef: &pplnv1beta1.TaskRef{
 			Name: "func-deploy",
+			Kind: pplnv1beta1.ClusterTaskKind,
 		},
 		RunAfter: []string{runAfter},
 		Workspaces: []pplnv1beta1.WorkspacePipelineTaskBinding{{
