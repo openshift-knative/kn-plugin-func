@@ -165,6 +165,7 @@ func goBuildEnvs(f fn.Function, p v1.Platform) (envs []string) {
 		if !isPegged(env) {
 			envs = append(envs, env)
 		}
+		fmt.Printf("%s\n", env)
 	}
 	return envs
 }
