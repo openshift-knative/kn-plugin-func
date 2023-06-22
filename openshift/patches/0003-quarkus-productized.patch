@@ -14,7 +14,7 @@ index 58abbb0a..f71561e3 100644
 -    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
 -    <quarkus.platform.version>3.1.2.Final</quarkus.platform.version>
 +    <quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
-+    <quarkus.platform.version>2.13.7.SP2-redhat-00002</quarkus.platform.version>
++    <quarkus.platform.version>2.13.7.SP3-redhat-00003</quarkus.platform.version>
      <skipITs>true</skipITs>
      <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
    </properties>
@@ -65,7 +65,7 @@ index 58abbb0a..f71561e3 100644
 -    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
 -    <quarkus.platform.version>3.1.2.Final</quarkus.platform.version>
 +    <quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
-+    <quarkus.platform.version>2.13.7.SP2-redhat-00002</quarkus.platform.version>
++    <quarkus.platform.version>2.13.7.SP3-redhat-00003</quarkus.platform.version>
      <skipITs>true</skipITs>
      <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
    </properties>
