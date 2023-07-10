@@ -1,13 +1,13 @@
 diff --git a/pkg/builders/builders.go b/pkg/builders/builders.go
-index 3575a8d3..6539235b 100644
+index e172834c..44d00311 100644
 --- a/pkg/builders/builders.go
 +++ b/pkg/builders/builders.go
-@@ -15,7 +15,7 @@ import (
- const (
+@@ -16,7 +16,7 @@ const (
+ 	Host    = "host"
  	Pack    = "pack"
  	S2I     = "s2i"
 -	Default = Pack
 +	Default = S2I
  )
-
+ 
  // Known builder names with a pretty-printed string representation
