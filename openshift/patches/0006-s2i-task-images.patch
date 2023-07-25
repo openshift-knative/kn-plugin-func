@@ -1,8 +1,8 @@
 diff --git a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-index 7bdf75df..22d17717 100644
+index 696699580..7c25d5b67 100644
 --- a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
 +++ b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-@@ -61,7 +61,7 @@ spec:
+@@ -60,7 +60,7 @@ spec:
        description: Digest of the image just built.
    steps:
      - name: generate
@@ -11,7 +11,7 @@ index 7bdf75df..22d17717 100644
        workingDir: $(workspaces.source.path)
        args: ["$(params.ENV_VARS[*])"]
        script: |
-@@ -100,7 +100,7 @@ spec:
+@@ -99,7 +99,7 @@ spec:
          - mountPath: /env-vars
            name: env-vars
      - name: build
@@ -19,5 +19,4 @@ index 7bdf75df..22d17717 100644
 +      image: registry.redhat.io/rhel8/buildah@sha256:a1e5cc0fb334e333e5eab69689223e8bd1f0c060810d260603b26cf8c0da2023
        workingDir: /gen-source
        script: |
-         [[ "$(workspaces.sslcertdir.bound)" == "true" ]] && CERT_DIR_FLAG="--cert-dir $(workspaces.sslcertdir.path)"
-         
+         TLS_VERIFY_FLAG=""
