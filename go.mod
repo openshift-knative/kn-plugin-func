@@ -33,7 +33,7 @@ require (
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
-	github.com/tektoncd/cli v0.31.0
+	github.com/tektoncd/cli v0.31.1
 	github.com/tektoncd/pipeline v0.47.0
 	github.com/whilp/git-urls v1.0.0
 	golang.org/x/crypto v0.8.0
