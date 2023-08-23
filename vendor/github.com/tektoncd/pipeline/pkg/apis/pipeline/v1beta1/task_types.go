@@ -24,6 +24,17 @@ import (
 	"knative.dev/pkg/kmeta"
 )
 
+const (
+	// TaskRunResultType default task run result value
+	TaskRunResultType ResultType = 1
+	// PipelineResourceResultType default pipeline result value
+	PipelineResourceResultType = 2
+	// InternalTektonResultType default internal tekton result value
+	InternalTektonResultType = 3
+	// UnknownResultType default unknown result type value
+	UnknownResultType = 10
+)
+
 // +genclient
 // +genclient:noStatus
 // +genreconciler:krshapedlogic=false
@@ -72,8 +83,6 @@ type TaskSpec struct {
 	// Resources is a list input and output resource to run the task
 	// Resources are represented in TaskRuns as bindings to instances of
 	// PipelineResources.
-	//
-	// Deprecated: Unused, preserved only for backwards compatibility
 	// +optional
 	Resources *TaskResources `json:"resources,omitempty"`
 
@@ -82,12 +91,7 @@ type TaskSpec struct {
 	// value.
 	// +optional
 	// +listType=atomic
-	Params ParamSpecs `json:"params,omitempty"`
-
-	// DisplayName is a user-facing name of the task that may be
-	// used to populate a UI.
-	// +optional
-	DisplayName string `json:"displayName,omitempty"`
+	Params []ParamSpec `json:"params,omitempty"`
 
 	// Description is a user-facing description of the task that may be
 	// used to populate a UI.

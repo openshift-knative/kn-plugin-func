@@ -43,9 +43,6 @@ const (
 	// RunKey is used as the label identifier for a Run
 	RunKey = GroupName + "/run"
 
-	// CustomRunKey is used as the label identifier for a CustomRun
-	CustomRunKey = GroupName + "/customRun"
-
 	// MemberOfLabelKey is used as the label identifier for a PipelineTask
 	// Set to Tasks/Finally depending on the position of the PipelineTask
 	MemberOfLabelKey = GroupName + "/memberOf"
@@ -83,9 +80,9 @@ var (
 		Resource: "pipelineruns",
 	}
 
-	// CustomRunResource represents a Tekton CustomRun
-	CustomRunResource = schema.GroupResource{
+	// PipelineResourceResource represents a Tekton PipelineResource
+	PipelineResourceResource = schema.GroupResource{
 		Group:    GroupName,
-		Resource: "customruns",
+		Resource: "pipelineresources",
 	}
 )

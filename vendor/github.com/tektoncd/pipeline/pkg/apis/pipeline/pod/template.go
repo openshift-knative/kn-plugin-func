@@ -32,13 +32,6 @@ type Template struct {
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
-	// List of environment variables that can be provided to the containers belonging to the pod.
-	// +optional
-	// +patchMergeKey=name
-	// +patchStrategy=merge
-	// +listType=atomic
-	Env []corev1.EnvVar `json:"env,omitempty" patchStrategy:"merge" patchMergeKey:"name" protobuf:"bytes,7,rep,name=env"`
-
 	// If specified, the pod's tolerations.
 	// +optional
 	// +listType=atomic
@@ -155,7 +148,6 @@ func (tpl *Template) ToAffinityAssistantTemplate() *AffinityAssistantTemplate {
 }
 
 // PodTemplate holds pod specific configuration
-//
 //nolint:revive
 type PodTemplate = Template
 
@@ -172,9 +164,6 @@ func MergePodTemplateWithDefault(tpl, defaultTpl *PodTemplate) *PodTemplate {
 		return defaultTpl
 	default:
 		// Otherwise, merge fields
-		if tpl.Env == nil {
-			tpl.Env = defaultTpl.Env
-		}
 		if tpl.NodeSelector == nil {
 			tpl.NodeSelector = defaultTpl.NodeSelector
 		}
@@ -217,7 +206,7 @@ func MergePodTemplateWithDefault(tpl, defaultTpl *PodTemplate) *PodTemplate {
 		if tpl.HostAliases == nil {
 			tpl.HostAliases = defaultTpl.HostAliases
 		}
-		if !tpl.HostNetwork && defaultTpl.HostNetwork {
+		if tpl.HostNetwork == false && defaultTpl.HostNetwork == true {
 			tpl.HostNetwork = true
 		}
 		if tpl.TopologySpreadConstraints == nil {

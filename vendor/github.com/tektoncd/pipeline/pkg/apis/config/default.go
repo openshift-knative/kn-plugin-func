@@ -20,14 +20,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"reflect"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/pod"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/yaml"
 )
 
@@ -44,8 +41,6 @@ const (
 	DefaultCloudEventSinkValue = ""
 	// DefaultMaxMatrixCombinationsCount is used when no max matrix combinations count is specified.
 	DefaultMaxMatrixCombinationsCount = 256
-	// DefaultResolverTypeValue is used when no default resolver type is specified
-	DefaultResolverTypeValue = ""
 
 	defaultTimeoutMinutesKey             = "default-timeout-minutes"
 	defaultServiceAccountKey             = "default-service-account"
@@ -55,8 +50,6 @@ const (
 	defaultCloudEventsSinkKey            = "default-cloud-events-sink"
 	defaultTaskRunWorkspaceBinding       = "default-task-run-workspace-binding"
 	defaultMaxMatrixCombinationsCountKey = "default-max-matrix-combinations-count"
-	defaultForbiddenEnv                  = "default-forbidden-env"
-	defaultResolverTypeKey               = "default-resolver-type"
 )
 
 // Defaults holds the default configurations
@@ -70,8 +63,6 @@ type Defaults struct {
 	DefaultCloudEventsSink            string
 	DefaultTaskRunWorkspaceBinding    string
 	DefaultMaxMatrixCombinationsCount int
-	DefaultForbiddenEnv               []string
-	DefaultResolverType               string
 }
 
 // GetDefaultsConfigName returns the name of the configmap containing all
@@ -100,9 +91,7 @@ func (cfg *Defaults) Equals(other *Defaults) bool {
 		other.DefaultAAPodTemplate.Equals(cfg.DefaultAAPodTemplate) &&
 		other.DefaultCloudEventsSink == cfg.DefaultCloudEventsSink &&
 		other.DefaultTaskRunWorkspaceBinding == cfg.DefaultTaskRunWorkspaceBinding &&
-		other.DefaultMaxMatrixCombinationsCount == cfg.DefaultMaxMatrixCombinationsCount &&
-		other.DefaultResolverType == cfg.DefaultResolverType &&
-		reflect.DeepEqual(other.DefaultForbiddenEnv, cfg.DefaultForbiddenEnv)
+		other.DefaultMaxMatrixCombinationsCount == cfg.DefaultMaxMatrixCombinationsCount
 }
 
 // NewDefaultsFromMap returns a Config given a map corresponding to a ConfigMap
@@ -113,7 +102,6 @@ func NewDefaultsFromMap(cfgMap map[string]string) (*Defaults, error) {
 		DefaultManagedByLabelValue:        DefaultManagedByLabelValue,
 		DefaultCloudEventsSink:            DefaultCloudEventSinkValue,
 		DefaultMaxMatrixCombinationsCount: DefaultMaxMatrixCombinationsCount,
-		DefaultResolverType:               DefaultResolverTypeValue,
 	}
 
 	if defaultTimeoutMin, ok := cfgMap[defaultTimeoutMinutesKey]; ok {
@@ -162,18 +150,6 @@ func NewDefaultsFromMap(cfgMap map[string]string) (*Defaults, error) {
 			return nil, fmt.Errorf("failed parsing tracing config %q", defaultMaxMatrixCombinationsCountKey)
 		}
 		tc.DefaultMaxMatrixCombinationsCount = int(matrixCombinationsCount)
-	}
-	if defaultForbiddenEnvString, ok := cfgMap[defaultForbiddenEnv]; ok {
-		tmpString := sets.NewString()
-		fEnvs := strings.Split(defaultForbiddenEnvString, ",")
-		for _, fEnv := range fEnvs {
-			tmpString.Insert(strings.TrimSpace(fEnv))
-		}
-		tc.DefaultForbiddenEnv = tmpString.List()
-	}
-
-	if defaultResolverType, ok := cfgMap[defaultResolverTypeKey]; ok {
-		tc.DefaultResolverType = defaultResolverType
 	}
 
 	return &tc, nil

@@ -33,19 +33,23 @@ const (
 	AlphaAPIFields = "alpha"
 	// BetaAPIFields is the value used for "enable-api-fields" when beta APIs should be usable as well.
 	BetaAPIFields = "beta"
-	// FailNoMatchPolicy is the value used for "trusted-resources-verification-no-match-policy" to fail TaskRun or PipelineRun
-	// when no matching policies are found
-	FailNoMatchPolicy = "fail"
-	// WarnNoMatchPolicy is the value used for "trusted-resources-verification-no-match-policy" to log warning and skip verification
-	// when no matching policies are found
-	WarnNoMatchPolicy = "warn"
-	// IgnoreNoMatchPolicy is the value used for "trusted-resources-verification-no-match-policy" to skip verification
-	// when no matching policies are found
-	IgnoreNoMatchPolicy = "ignore"
-	// ResultExtractionMethodTerminationMessage is the value used for "results-from" as a way to extract results from tasks using kubernetes termination message.
-	ResultExtractionMethodTerminationMessage = "termination-message"
-	// ResultExtractionMethodSidecarLogs is the value used for "results-from" as a way to extract results from tasks using sidecar logs.
-	ResultExtractionMethodSidecarLogs = "sidecar-logs"
+	// FullEmbeddedStatus is the value used for "embedded-status" when the full statuses of TaskRuns and Runs should be
+	// embedded in PipelineRunStatusFields, but ChildReferences should not be used.
+	FullEmbeddedStatus = "full"
+	// BothEmbeddedStatus is the value used for "embedded-status" when full embedded statuses of TaskRuns and Runs as
+	// well as ChildReferences should be used in PipelineRunStatusFields.
+	BothEmbeddedStatus = "both"
+	// MinimalEmbeddedStatus is the value used for "embedded-status" when only ChildReferences should be used in
+	// PipelineRunStatusFields.
+	MinimalEmbeddedStatus = "minimal"
+	// EnforceResourceVerificationMode is the value used for "resource-verification-mode" when verification is applied and fail the
+	// TaskRun or PipelineRun when verification fails
+	EnforceResourceVerificationMode = "enforce"
+	// WarnResourceVerificationMode is the value used for "resource-verification-mode" when verification is applied but only log
+	// the warning when verification fails
+	WarnResourceVerificationMode = "warn"
+	// SkipResourceVerificationMode is the value used for "resource-verification-mode" when verification is skipped
+	SkipResourceVerificationMode = "skip"
 	// DefaultDisableAffinityAssistant is the default value for "disable-affinity-assistant".
 	DefaultDisableAffinityAssistant = false
 	// DefaultDisableCredsInit is the default value for "disable-creds-init".
@@ -58,64 +62,53 @@ const (
 	DefaultRequireGitSSHSecretKnownHosts = false
 	// DefaultEnableTektonOciBundles is the default value for "enable-tekton-oci-bundles".
 	DefaultEnableTektonOciBundles = false
+	// DefaultEnableCustomTasks is the default value for "enable-custom-tasks".
+	DefaultEnableCustomTasks = false
 	// DefaultEnableAPIFields is the default value for "enable-api-fields".
 	DefaultEnableAPIFields = StableAPIFields
 	// DefaultSendCloudEventsForRuns is the default value for "send-cloudevents-for-runs".
 	DefaultSendCloudEventsForRuns = false
-	// EnforceNonfalsifiabilityWithSpire is the value used for  "enable-nonfalsifiability" when SPIRE is used to enable non-falsifiability.
-	EnforceNonfalsifiabilityWithSpire = "spire"
-	// EnforceNonfalsifiabilityNone is the value used for  "enable-nonfalsifiability" when non-falsifiability is not enabled.
-	EnforceNonfalsifiabilityNone = ""
-	// DefaultEnforceNonfalsifiability is the default value for "enforce-nonfalsifiability".
-	DefaultEnforceNonfalsifiability = EnforceNonfalsifiabilityNone
-	// DefaultNoMatchPolicyConfig is the default value for "trusted-resources-verification-no-match-policy".
-	DefaultNoMatchPolicyConfig = IgnoreNoMatchPolicy
+	// DefaultEmbeddedStatus is the default value for "embedded-status".
+	DefaultEmbeddedStatus = FullEmbeddedStatus
+	// DefaultEnableSpire is the default value for "enable-spire".
+	DefaultEnableSpire = false
+	// DefaultResourceVerificationMode is the default value for "resource-verification-mode".
+	DefaultResourceVerificationMode = SkipResourceVerificationMode
 	// DefaultEnableProvenanceInStatus is the default value for "enable-provenance-status".
 	DefaultEnableProvenanceInStatus = false
-	// DefaultResultExtractionMethod is the default value for ResultExtractionMethod
-	DefaultResultExtractionMethod = ResultExtractionMethodTerminationMessage
-	// DefaultMaxResultSize is the default value in bytes for the size of a result
-	DefaultMaxResultSize = 4096
 
 	disableAffinityAssistantKey         = "disable-affinity-assistant"
 	disableCredsInitKey                 = "disable-creds-init"
 	runningInEnvWithInjectedSidecarsKey = "running-in-environment-with-injected-sidecars"
 	awaitSidecarReadinessKey            = "await-sidecar-readiness"
-	requireGitSSHSecretKnownHostsKey    = "require-git-ssh-secret-known-hosts" //nolint:gosec
+	requireGitSSHSecretKnownHostsKey    = "require-git-ssh-secret-known-hosts" // nolint: gosec
 	enableTektonOCIBundles              = "enable-tekton-oci-bundles"
+	enableCustomTasks                   = "enable-custom-tasks"
 	enableAPIFields                     = "enable-api-fields"
 	sendCloudEventsForRuns              = "send-cloudevents-for-runs"
-	enforceNonfalsifiability            = "enforce-nonfalsifiability"
-	verificationNoMatchPolicy           = "trusted-resources-verification-no-match-policy"
+	embeddedStatus                      = "embedded-status"
+	enableSpire                         = "enable-spire"
+	verificationMode                    = "resource-verification-mode"
 	enableProvenanceInStatus            = "enable-provenance-in-status"
-	resultExtractionMethod              = "results-from"
-	maxResultSize                       = "max-result-size"
 )
 
 // FeatureFlags holds the features configurations
 // +k8s:deepcopy-gen=true
-//
-//nolint:musttag
 type FeatureFlags struct {
 	DisableAffinityAssistant         bool
 	DisableCredsInit                 bool
 	RunningInEnvWithInjectedSidecars bool
 	RequireGitSSHSecretKnownHosts    bool
 	EnableTektonOCIBundles           bool
+	EnableCustomTasks                bool
 	ScopeWhenExpressionsToTask       bool
 	EnableAPIFields                  string
 	SendCloudEventsForRuns           bool
 	AwaitSidecarReadiness            bool
-	EnforceNonfalsifiability         string
-	// VerificationNoMatchPolicy is the feature flag for "trusted-resources-verification-no-match-policy"
-	// VerificationNoMatchPolicy can be set to "ignore", "warn" and "fail" values.
-	// ignore: skip trusted resources verification when no matching verification policies found
-	// warn: skip trusted resources verification when no matching verification policies found and log a warning
-	// fail: fail the taskrun or pipelines run if no matching verification policies found
-	VerificationNoMatchPolicy string
-	EnableProvenanceInStatus  bool
-	ResultExtractionMethod    string
-	MaxResultSize             int
+	EmbeddedStatus                   string
+	EnableSpire                      bool
+	ResourceVerificationMode         string
+	EnableProvenanceInStatus         bool
 }
 
 // GetFeatureFlagsConfigName returns the name of the configmap containing all
@@ -133,7 +126,7 @@ func NewFeatureFlagsFromMap(cfgMap map[string]string) (*FeatureFlags, error) {
 		if cfg, ok := cfgMap[key]; ok {
 			value, err := strconv.ParseBool(cfg)
 			if err != nil {
-				return fmt.Errorf("failed parsing feature flags config %q: %w", cfg, err)
+				return fmt.Errorf("failed parsing feature flags config %q: %v", cfg, err)
 			}
 			*feature = value
 			return nil
@@ -164,19 +157,13 @@ func NewFeatureFlagsFromMap(cfgMap map[string]string) (*FeatureFlags, error) {
 	if err := setFeature(sendCloudEventsForRuns, DefaultSendCloudEventsForRuns, &tc.SendCloudEventsForRuns); err != nil {
 		return nil, err
 	}
-	if err := setVerificationNoMatchPolicy(cfgMap, DefaultNoMatchPolicyConfig, &tc.VerificationNoMatchPolicy); err != nil {
+	if err := setEmbeddedStatus(cfgMap, DefaultEmbeddedStatus, &tc.EmbeddedStatus); err != nil {
+		return nil, err
+	}
+	if err := setResourceVerificationMode(cfgMap, DefaultResourceVerificationMode, &tc.ResourceVerificationMode); err != nil {
 		return nil, err
 	}
 	if err := setFeature(enableProvenanceInStatus, DefaultEnableProvenanceInStatus, &tc.EnableProvenanceInStatus); err != nil {
-		return nil, err
-	}
-	if err := setResultExtractionMethod(cfgMap, DefaultResultExtractionMethod, &tc.ResultExtractionMethod); err != nil {
-		return nil, err
-	}
-	if err := setMaxResultSize(cfgMap, DefaultMaxResultSize, &tc.MaxResultSize); err != nil {
-		return nil, err
-	}
-	if err := setEnforceNonFalsifiability(cfgMap, tc.EnableAPIFields, &tc.EnforceNonfalsifiability); err != nil {
 		return nil, err
 	}
 
@@ -188,8 +175,16 @@ func NewFeatureFlagsFromMap(cfgMap map[string]string) (*FeatureFlags, error) {
 	// defeat the purpose of having a single shared gate for all alpha features.
 	if tc.EnableAPIFields == AlphaAPIFields {
 		tc.EnableTektonOCIBundles = true
+		tc.EnableCustomTasks = true
+		tc.EnableSpire = true
 	} else {
 		if err := setFeature(enableTektonOCIBundles, DefaultEnableTektonOciBundles, &tc.EnableTektonOCIBundles); err != nil {
+			return nil, err
+		}
+		if err := setFeature(enableCustomTasks, DefaultEnableCustomTasks, &tc.EnableCustomTasks); err != nil {
+			return nil, err
+		}
+		if err := setFeature(enableSpire, DefaultEnableSpire, &tc.EnableSpire); err != nil {
 			return nil, err
 		}
 	}
@@ -212,82 +207,34 @@ func setEnabledAPIFields(cfgMap map[string]string, defaultValue string, feature 
 	return nil
 }
 
-// setEnforceNonFalsifiability sets the "enforce-nonfalsifiability" flag based on the content of a given map.
-// If the feature gate is invalid, then an error is returned.
-func setEnforceNonFalsifiability(cfgMap map[string]string, enableAPIFields string, feature *string) error {
-	var value = DefaultEnforceNonfalsifiability
-	if cfg, ok := cfgMap[enforceNonfalsifiability]; ok {
-		value = strings.ToLower(cfg)
-	}
-
-	// validate that "enforce-nonfalsifiability" is set to a valid value
-	switch value {
-	case EnforceNonfalsifiabilityNone, EnforceNonfalsifiabilityWithSpire:
-		break
-	default:
-		return fmt.Errorf("invalid value for feature flag %q: %q", enforceNonfalsifiability, value)
-	}
-
-	// validate that "enforce-nonfalsifiability" is set to allowed values for stability level
-	switch enableAPIFields {
-	case AlphaAPIFields:
-		*feature = value
-	default:
-		// Do not consider any form of non-falsifiability enforcement in non-alpha mode
-		if value != DefaultEnforceNonfalsifiability {
-			return fmt.Errorf("%q can be set to non-default values (%q) only in alpha", enforceNonfalsifiability, value)
-		}
-	}
-	return nil
-}
-
-// setResultExtractionMethod sets the "results-from" flag based on the content of a given map.
+// setEmbeddedStatus sets the "embedded-status" flag based on the content of a given map.
 // If the feature gate is invalid or missing then an error is returned.
-func setResultExtractionMethod(cfgMap map[string]string, defaultValue string, feature *string) error {
+func setEmbeddedStatus(cfgMap map[string]string, defaultValue string, feature *string) error {
 	value := defaultValue
-	if cfg, ok := cfgMap[resultExtractionMethod]; ok {
+	if cfg, ok := cfgMap[embeddedStatus]; ok {
 		value = strings.ToLower(cfg)
 	}
 	switch value {
-	case ResultExtractionMethodTerminationMessage, ResultExtractionMethodSidecarLogs:
+	case FullEmbeddedStatus, BothEmbeddedStatus, MinimalEmbeddedStatus:
 		*feature = value
 	default:
-		return fmt.Errorf("invalid value for feature flag %q: %q", resultExtractionMethod, value)
+		return fmt.Errorf("invalid value for feature flag %q: %q", embeddedStatus, value)
 	}
 	return nil
 }
 
-// setMaxResultSize sets the "max-result-size" flag based on the content of a given map.
-// If the feature gate is invalid or missing then an error is returned.
-func setMaxResultSize(cfgMap map[string]string, defaultValue int, feature *int) error {
-	value := defaultValue
-	if cfg, ok := cfgMap[maxResultSize]; ok {
-		v, err := strconv.Atoi(cfg)
-		if err != nil {
-			return err
-		}
-		value = v
-	}
-	// if max limit is > 1.5 MB (CRD limit).
-	if value >= 1572864 {
-		return fmt.Errorf("invalid value for feature flag %q: %q. This is exceeding the CRD limit", resultExtractionMethod, fmt.Sprint(value))
-	}
-	*feature = value
-	return nil
-}
-
-// setVerificationNoMatchPolicy sets the "trusted-resources-verification-no-match-policy" flag based on the content of a given map.
+// setResourceVerificationMode sets the "resource-verification-mode" flag based on the content of a given map.
 // If the value is invalid or missing then an error is returned.
-func setVerificationNoMatchPolicy(cfgMap map[string]string, defaultValue string, feature *string) error {
+func setResourceVerificationMode(cfgMap map[string]string, defaultValue string, feature *string) error {
 	value := defaultValue
-	if cfg, ok := cfgMap[verificationNoMatchPolicy]; ok {
+	if cfg, ok := cfgMap[verificationMode]; ok {
 		value = strings.ToLower(cfg)
 	}
 	switch value {
-	case FailNoMatchPolicy, WarnNoMatchPolicy, IgnoreNoMatchPolicy:
+	case EnforceResourceVerificationMode, WarnResourceVerificationMode, SkipResourceVerificationMode:
 		*feature = value
 	default:
-		return fmt.Errorf("invalid value for feature flag %q: %q", verificationNoMatchPolicy, value)
+		return fmt.Errorf("invalid value for feature flag %q: %q", verificationMode, value)
 	}
 	return nil
 }
@@ -299,33 +246,12 @@ func NewFeatureFlagsFromConfigMap(config *corev1.ConfigMap) (*FeatureFlags, erro
 
 // EnableAlphaAPIFields enables alpha features in an existing context (for use in testing)
 func EnableAlphaAPIFields(ctx context.Context) context.Context {
-	return setEnableAPIFields(ctx, AlphaAPIFields)
+	return setEnableAPIFields(ctx, "alpha")
 }
 
 // EnableBetaAPIFields enables beta features in an existing context (for use in testing)
 func EnableBetaAPIFields(ctx context.Context) context.Context {
-	return setEnableAPIFields(ctx, BetaAPIFields)
-}
-
-// EnableStableAPIFields enables stable features in an existing context (for use in testing)
-func EnableStableAPIFields(ctx context.Context) context.Context {
-	return setEnableAPIFields(ctx, StableAPIFields)
-}
-
-// GetVerificationNoMatchPolicy returns the "trusted-resources-verification-no-match-policy" value
-func GetVerificationNoMatchPolicy(ctx context.Context) string {
-	return FromContextOrDefaults(ctx).FeatureFlags.VerificationNoMatchPolicy
-}
-
-// CheckAlphaOrBetaAPIFields return true if the enable-api-fields is either set to alpha or set to beta
-func CheckAlphaOrBetaAPIFields(ctx context.Context) bool {
-	cfg := FromContextOrDefaults(ctx)
-	return cfg.FeatureFlags.EnableAPIFields == AlphaAPIFields || cfg.FeatureFlags.EnableAPIFields == BetaAPIFields
-}
-
-// IsSpireEnabled checks if non-falsifiable provenance is enforced through SPIRE
-func IsSpireEnabled(ctx context.Context) bool {
-	return FromContextOrDefaults(ctx).FeatureFlags.EnforceNonfalsifiability == EnforceNonfalsifiabilityWithSpire
+	return setEnableAPIFields(ctx, "beta")
 }
 
 func setEnableAPIFields(ctx context.Context, want string) context.Context {

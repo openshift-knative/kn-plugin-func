@@ -11,7 +11,7 @@ import (
 	"github.com/buildpacks/lifecycle/internal/layer"
 	"github.com/buildpacks/lifecycle/layers"
 	"github.com/buildpacks/lifecycle/log"
-	"github.com/buildpacks/lifecycle/platform"
+	"github.com/buildpacks/lifecycle/platform/files"
 )
 
 type Restorer struct {
@@ -19,8 +19,8 @@ type Restorer struct {
 	Logger    log.Logger
 
 	Buildpacks            []buildpack.GroupElement
-	LayerMetadataRestorer layer.MetadataRestorer  // Platform API >= 0.7
-	LayersMetadata        platform.LayersMetadata // Platform API >= 0.7
+	LayerMetadataRestorer layer.MetadataRestorer // Platform API >= 0.7
+	LayersMetadata        files.LayersMetadata   // Platform API >= 0.7
 	PlatformAPI           *api.Version
 	SBOMRestorer          layer.SBOMRestorer
 }
@@ -28,6 +28,7 @@ type Restorer struct {
 // Restore restores metadata for launch and cache layers into the layers directory and attempts to restore layer data for cache=true layers, removing the layer when unsuccessful.
 // If a usable cache is not provided, Restore will not restore any cache=true layer metadata.
 func (r *Restorer) Restore(cache Cache) error {
+	defer log.NewMeasurement("Restorer", r.Logger)()
 	cacheMeta, err := retrieveCacheMetadata(cache, r.Logger)
 	if err != nil {
 		return err
@@ -36,6 +37,7 @@ func (r *Restorer) Restore(cache Cache) error {
 	useShaFiles := !r.restoresLayerMetadata()
 	layerSHAStore := layer.NewSHAStore(useShaFiles)
 	if r.restoresLayerMetadata() {
+		r.Logger.Debug("Restoring Layer Metadata")
 		if err := r.LayerMetadataRestorer.Restore(r.Buildpacks, r.LayersMetadata, cacheMeta, layerSHAStore); err != nil {
 			return err
 		}
@@ -61,6 +63,7 @@ func (r *Restorer) Restore(cache Cache) error {
 			cachedFn = buildpack.MadeCached
 		}
 
+		r.Logger.Debugf("Reading Buildpack Layers directory %s", r.LayersDir)
 		buildpackDir, err := buildpack.ReadLayersDir(r.LayersDir, bp, r.Logger)
 		if err != nil {
 			return errors.Wrapf(err, "reading buildpack layer directory")
