@@ -16,17 +16,17 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - uses: imjasonh/setup-ko@v0.6
-      - name: Login RH Image Registry
-        env:
-          RH_REG_USR: ${{ secrets.RH_REG_USR }}
-          RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
-        run: echo "${RH_REG_USR}"; docker login -u "${RH_REG_USR}" -p "${RH_REG_PWD}" registry.redhat.io
       - name: Install Binaries
         run: ./hack/binaries.sh
       - name: Setup testing func image
         run: ./hack/create-testing-func-image.sh
       - name: Allocate Cluster
         run: ./hack/allocate.sh
+      - name: Pull secrets for KinD cluster
+        env:
+          RH_REG_USR: ${{ secrets.RH_REG_USR }}
+          RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
+        run: go run ./hack/kind_pull_secrtes.go
       - name: Deploy Tekton
         run: ./hack/tekton.sh
       - name: Deploy Test Git Server
