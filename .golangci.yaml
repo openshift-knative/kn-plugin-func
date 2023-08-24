@@ -7,6 +7,8 @@
 # 
 #
 run:
+  skip-dirs:
+    - hack
   timeout: 5m
 
 linters:
