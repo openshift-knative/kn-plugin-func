@@ -19,7 +19,8 @@ EOF
 
   local node
   for node in $(kind get nodes --name "func"); do
-    tar -cf - "${tmp_docker_config}" --transform='flags=r;s|.*|config.json|' | docker cp - "${node}:/var/lib/kubelet/"
+    tar -cf - "${tmp_docker_config}" --transform="flags=r;s|${tmp_docker_config}|config.json|" | \
+      docker cp - "${node}:/var/lib/kubelet/"
   done
   rm "${tmp_docker_config}"
 }

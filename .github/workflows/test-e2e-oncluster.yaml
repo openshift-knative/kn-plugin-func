@@ -22,7 +22,7 @@ jobs:
         run: ./hack/create-testing-func-image.sh
       - name: Allocate Cluster
         run: ./hack/allocate.sh
-      - name: Pull secrets for KinD cluster
+      - name: Install RH pull secrets for KinD cluster
         env:
           RH_REG_USR: ${{ secrets.RH_REG_USR }}
           RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
