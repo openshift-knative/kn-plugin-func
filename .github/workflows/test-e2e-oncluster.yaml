@@ -20,7 +20,7 @@ jobs:
         env:
           RH_REG_USR: ${{ secrets.RH_REG_USR }}
           RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
-        run: docker login -u "${RH_REG_USR}" -p "${RH_REG_PWD}" registry.redhat.io
+        run: echo "${RH_REG_USR}"; docker login -u "${RH_REG_USR}" -p "${RH_REG_PWD}" registry.redhat.io
       - name: Install Binaries
         run: ./hack/binaries.sh
       - name: Setup testing func image
