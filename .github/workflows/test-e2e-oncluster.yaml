@@ -16,6 +16,11 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
       - uses: imjasonh/setup-ko@v0.6
+      - name: Login RH Image Registry
+        env:
+          RH_REG_USR: ${{ secrets.RH_REG_USR }}
+          RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
+        run: echo "${RH_REG_PWD}" | docker login -u "${RH_REG_USR}" registry.redhat.io
       - name: Install Binaries
         run: ./hack/binaries.sh
       - name: Setup testing func image
