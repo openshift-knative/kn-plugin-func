@@ -53,6 +53,7 @@ git add .
 
 make generate/zz_filesystem_generated.go
 git add $custom_files generate/zz_filesystem_generated.go
+git add templates/certs/ca-certificates.crt
 git commit -m "${openshift_files_msg}"
 
 git push -f openshift release-next
