@@ -69,7 +69,7 @@ if hash hub 2>/dev/null; then
    COUNT=$(hub api -H "Accept: application/vnd.github.v3+json" repos/openshift-knative/${REPO_NAME}/pulls --flat \
     | grep -c "${robot_trigger_msg}") || true
    if [ "$COUNT" = "0" ]; then
-      hub pull-request --no-edit -l "kind/sync-fork-to-upstream" -b openshift-knative/${REPO_NAME}:release-next -h openshift-knative/${REPO_NAME}:release-next-ci -m "${robot_trigger_msg}"
+      hub pull-request --no-edit -l "kind/sync-fork-to-upstream,approved,lgtm" -b openshift-knative/${REPO_NAME}:release-next -h openshift-knative/${REPO_NAME}:release-next-ci -m "${robot_trigger_msg}"
    fi
 else
    echo "hub (https://github.com/github/hub) is not installed, so you'll need to create a PR manually."
