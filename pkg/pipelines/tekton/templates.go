@@ -89,7 +89,7 @@ const (
 
 var (
 	FuncRepoRef       = "openshift-knative/kn-plugin-func"
-	FuncRepoBranchRef = "serverless-1.30"
+	FuncRepoBranchRef = "serverless-1.31"
 
 	taskBasePath = "https://raw.githubusercontent.com/" +
 		FuncRepoRef + "/" + FuncRepoBranchRef + "/pkg/pipelines/resources/tekton/task/"
