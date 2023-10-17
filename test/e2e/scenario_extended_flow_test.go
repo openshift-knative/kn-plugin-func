@@ -90,7 +90,7 @@ func TestFunctionExtendedFlow(t *testing.T) {
 	time.Sleep(time.Second)
 
 	// GET Function HTTP Endpoint
-	_, bodyResp := testhttp.TestGet(t, "http://:"+funcPort+"?message=local")
+	_, bodyResp := testhttp.TestGet(t, "http://localhost:"+funcPort+"?message=local")
 	assert.Assert(t, strings.Contains(bodyResp, `{"message":"local"}`), "function response does not contain expected body.")
 
 	// ---------------------------
