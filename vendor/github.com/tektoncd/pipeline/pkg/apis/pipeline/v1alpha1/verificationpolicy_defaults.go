@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Tekton Authors
+Copyright 2020 The Tekton Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,13 +22,9 @@ import (
 	"knative.dev/pkg/apis"
 )
 
-var _ apis.Defaultable = (*PipelineResource)(nil)
+var _ apis.Defaultable = (*VerificationPolicy)(nil)
 
-// SetDefaults implements api.Defaultable
-func (t *PipelineResource) SetDefaults(ctx context.Context) {
-	t.Spec.SetDefaults(ctx)
-}
+// SetDefaults implements apis.Defaultable
+func (v *VerificationPolicy) SetDefaults(ctx context.Context) {
 
-// SetDefaults implements api.Defaultable
-func (ts *PipelineResourceSpec) SetDefaults(ctx context.Context) {
 }

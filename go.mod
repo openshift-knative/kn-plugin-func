@@ -217,6 +217,7 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
+	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
@@ -254,10 +255,9 @@ replace (
 
 	// Use older version since it checks ~/.docker/config.json for credentials as opposed to later versions
 	github.com/containers/image/v5 => github.com/containers/image/v5 v5.23.1
+
 	// Tekton CLI uses newer version without currently used constructor code
 	github.com/hinshun/vt10x => github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c
-	// 	github.com/tektoncd/cli v0.29.1 requires github.com/tektoncd/pipeline v0.42.0
-	github.com/tektoncd/pipeline => github.com/tektoncd/pipeline v0.42.0
 	// Pin k8s.io dependencies to align with Knative and Tekton needs
 	k8s.io/api => k8s.io/api v0.25.4
 	k8s.io/apimachinery => k8s.io/apimachinery v0.25.4
