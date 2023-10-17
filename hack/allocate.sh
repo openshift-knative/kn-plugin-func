@@ -24,10 +24,10 @@ export TERM="${TERM:-dumb}"
 
 main() {
 
-  local kubernetes_version=v1.24.6
-  local knative_serving_version=v1.8.0
-  local knative_eventing_version=v1.8.0
-  local kourier_version=v1.8.0
+  local kubernetes_version=v1.27.1
+  local knative_serving_version=v1.9.0
+  local knative_eventing_version=v1.9.0
+  local kourier_version=v1.9.0
 
   local em=$(tput bold)$(tput setaf 2)
   local me=$(tput sgr0)
