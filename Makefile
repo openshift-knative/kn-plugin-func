@@ -49,6 +49,7 @@ CODE := $(shell find . -name '*.go') \
 
 # Default Targets
 all: build docs
+	@echo '🎉 Build process completed!'
 
 # Help Text
 # Headings: lines with `##$` comment prefix

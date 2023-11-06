@@ -73,6 +73,7 @@ Learn more about Knative at: https://knative.dev`, cfg.Name),
 				NewDeployCmd(newClient),
 				NewDeleteCmd(newClient),
 				NewListCmd(newClient),
+				NewSubscribeCmd(),
 			},
 		},
 		{
