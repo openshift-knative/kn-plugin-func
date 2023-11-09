@@ -61,7 +61,7 @@ spec:
       description: Digest of the image just built.
   steps:
     - name: generate
-      image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:8a70f50122691cca6ba4a97bacd56bd5f4e55bcdd37ba86712da0e41160d0263
+      image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:6a6025914296a62fdf2092c3a40011bd9b966a6806b094d51eec5e1bd5026ef4
       workingDir: $(workspaces.source.path)
       args: ["$(params.ENV_VARS[*])"]
       script: |
@@ -79,7 +79,7 @@ spec:
         cat /env-vars/env-file
         echo "------------------------------"
 
-        /s2i --loglevel=$(params.LOGLEVEL) build $(params.PATH_CONTEXT) $(params.BUILDER_IMAGE) \
+        /usr/local/bin/s2i --loglevel=$(params.LOGLEVEL) build $(params.PATH_CONTEXT) $(params.BUILDER_IMAGE) \
         --image-scripts-url $(params.S2I_IMAGE_SCRIPTS_URL) \
         --as-dockerfile /gen-source/Dockerfile.gen --environment-file /env-vars/env-file
 
