@@ -12,9 +12,9 @@ index 58abbb0a..f71561e3 100644
      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
      <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
 -    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
--    <quarkus.platform.version>3.5.3</quarkus.platform.version>
+-    <quarkus.platform.version>3.6.6</quarkus.platform.version>
 +    <quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
-+    <quarkus.platform.version>3.2.6.Final-redhat-00002</quarkus.platform.version>
++    <quarkus.platform.version>3.2.9.Final-redhat-00003</quarkus.platform.version>
      <skipITs>true</skipITs>
      <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
    </properties>
@@ -63,9 +63,9 @@ index 58abbb0a..f71561e3 100644
      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
      <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
 -    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
--    <quarkus.platform.version>3.5.3</quarkus.platform.version>
+-    <quarkus.platform.version>3.6.6</quarkus.platform.version>
 +    <quarkus.platform.group-id>com.redhat.quarkus.platform</quarkus.platform.group-id>
-+    <quarkus.platform.version>3.2.6.Final-redhat-00002</quarkus.platform.version>
++    <quarkus.platform.version>3.2.9.Final-redhat-00003</quarkus.platform.version>
      <skipITs>true</skipITs>
      <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
    </properties>
