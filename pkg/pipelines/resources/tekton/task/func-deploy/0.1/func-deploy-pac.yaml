@@ -28,6 +28,8 @@ spec:
       env:
         - name: FUNC_IMAGE
           value: "$(params.image)"
+        - name: HOME
+          value: "/tmp"
       command:
         - /ko-app/kn
       args:
