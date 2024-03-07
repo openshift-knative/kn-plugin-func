@@ -49,6 +49,12 @@ if [[ -d openshift/overrides ]]; then
   cp -r openshift/overrides/. .
   rm -rf openshift/overrides
 fi
+# Apply midstream patches using scripts
+if [[ -d openshift/scripts ]]; then
+  for script in openshift/scripts/*.sh; do
+    "$script"
+  done
+fi
 git add .
 
 make generate/zz_filesystem_generated.go
