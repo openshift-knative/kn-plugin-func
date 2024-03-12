@@ -34,7 +34,7 @@ spec:
         client.knative.dev/user-image: quay.io/repository/mvasek/gitserver
     spec:
       containers:
-      - image: ghcr.io/jrangelramos/gitserver
+      - image: quay.io/repository/mvasek/gitserver
         ports:
         - containerPort: 80
         resources: {}
