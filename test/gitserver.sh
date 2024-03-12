@@ -31,7 +31,7 @@ spec:
       annotations:
         autoscaling.knative.dev/max-scale: "1"
         autoscaling.knative.dev/min-scale: "1"
-        client.knative.dev/user-image: ghcr.io/jrangelramos/gitserver
+        client.knative.dev/user-image: quay.io/repository/mvasek/gitserver
     spec:
       containers:
       - image: ghcr.io/jrangelramos/gitserver
