@@ -31,10 +31,10 @@ spec:
       annotations:
         autoscaling.knative.dev/max-scale: "1"
         autoscaling.knative.dev/min-scale: "1"
-        client.knative.dev/user-image: quay.io/repository/mvasek/gitserver
+        client.knative.dev/user-image: quay.io/mvasek/gitserver
     spec:
       containers:
-      - image: quay.io/repository/mvasek/gitserver
+      - image: quay.io/mvasek/gitserver
         ports:
         - containerPort: 80
         resources: {}
