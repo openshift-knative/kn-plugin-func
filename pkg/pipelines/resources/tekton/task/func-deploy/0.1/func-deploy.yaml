@@ -24,6 +24,19 @@ spec:
       description: The workspace containing the function project
   steps:
     - name: func-deploy
-      image: "ghcr.io/knative/func/func:latest"
-      script: |
-        func deploy --verbose --build=false --push=false --path=$(params.path) --remote=false --image="$(params.image)"
+      image: "registry.redhat.io/openshift-serverless-1/client-kn-rhel8@sha256:5121f1657645c4932fb2cf1e85810e5e135dca3a297138c687d827a9e493557d"
+      env:
+        - name: FUNC_IMAGE
+          value: "$(params.image)"
+        - name: HOME
+          value: "/tmp"
+      command:
+        - /ko-app/kn
+      args:
+        - func
+        - deploy
+        - --verbose
+        - --build=false
+        - --push=false
+        - --path=$(params.path)
+        - --remote=false
