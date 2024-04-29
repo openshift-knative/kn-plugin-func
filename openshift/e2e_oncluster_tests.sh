@@ -36,6 +36,11 @@ source "$(go run knative.dev/hack/cmd/script e2e-tests.sh)"
 
 pushd "$(dirname "$0")/.."
 
+export BUILD_NUMBER=${BUILD_NUMBER:-$(head -c 128 < /dev/urandom | LC_CTYPE=C tr -dc 'a-z0-9' | head -c 8)}
+export ARTIFACT_DIR="${ARTIFACT_DIR:-$(dirname "$(mktemp -d -u)")/build-${BUILD_NUMBER}}"
+export ARTIFACTS="${ARTIFACTS:-${ARTIFACT_DIR}}/kn-func/e2e-oncluster-tests"
+mkdir -p "${ARTIFACTS}"
+
 export E2E_REGISTRY_URL="${E2E_REGISTRY_URL:-ttl.sh/knfuncci$(head -c 128 </dev/urandom | LC_CTYPE=C tr -dc 'a-z0-9' | head -c 6)}"
 export E2E_FUNC_BIN_PATH="${E2E_FUNC_BIN_PATH:-$(pwd)/func}"
 export E2E_USE_KN_FUNC="false"
