@@ -101,13 +101,13 @@ var (
 // sets the values only if they have not been set via the linker "-X" flag
 func init() {
 	if BuildpackTaskURL == "" {
-		BuildpackTaskURL = taskBasePath + "func-buildpacks/0.2/func-buildpacks.yaml"
+		BuildpackTaskURL = taskBasePath + "func-buildpacks/0.2/func-buildpacks-pac.yaml"
 	}
 	if S2ITaskURL == "" {
-		S2ITaskURL = taskBasePath + "func-s2i/0.1/func-s2i.yaml"
+		S2ITaskURL = taskBasePath + "func-s2i/0.1/func-s2i-pac.yaml"
 	}
 	if DeployTaskURL == "" {
-		DeployTaskURL = taskBasePath + "func-deploy/0.1/func-deploy.yaml"
+		DeployTaskURL = taskBasePath + "func-deploy/0.1/func-deploy-pac.yaml"
 	}
 }
 
