@@ -204,12 +204,17 @@ func createPipelineRunTemplatePAC(f fn.Function, labels map[string]string) error
 		s2iImageScriptsUrl = quarkusS2iImageScriptsUrl
 	}
 
+	image := f.Deploy.Image
+	if image == "" {
+		image = f.Image
+	}
+
 	data := templateData{
 		FunctionName:  f.Name,
 		Annotations:   f.Deploy.Annotations,
 		Labels:        labels,
 		ContextDir:    contextDir,
-		FunctionImage: f.Deploy.Image,
+		FunctionImage: image,
 		Registry:      f.Registry,
 		BuilderImage:  getBuilderImage(f),
 		BuildEnvs:     buildEnvs,
@@ -230,8 +235,8 @@ func createPipelineRunTemplatePAC(f fn.Function, labels map[string]string) error
 
 		S2iImageScriptsUrl: s2iImageScriptsUrl,
 
-		RepoUrl:  "{{ repo_url }}",
-		Revision: "{{ revision }}",
+		RepoUrl:  "\"{{ repo_url }}\"",
+		Revision: "\"{{ revision }}\"",
 	}
 
 	var template string
