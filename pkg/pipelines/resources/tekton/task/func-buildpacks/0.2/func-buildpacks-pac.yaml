@@ -1,6 +1,6 @@
 ---
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   name: func-buildpacks
   labels:
@@ -43,9 +43,6 @@ spec:
       type: array
       description: Environment variables to set during _build-time_.
       default: []
-    - name: PROCESS_TYPE
-      description: The default process type to set on the image.
-      default: "web"
     - name: RUN_IMAGE
       description: Reference to a run image to use.
       default: ""
@@ -57,7 +54,7 @@ spec:
       default: "false"
     - name: USER_ID
       description: The user ID of the builder image user.
-      default: "1000"
+      default: "1001"
     - name: GROUP_ID
       description: The group ID of the builder image user.
       default: "0"
@@ -74,7 +71,7 @@ spec:
   stepTemplate:
     env:
       - name: CNB_PLATFORM_API
-        value: "0.4"
+        value: "0.10"
 
   steps:
     - name: prepare
@@ -168,7 +165,6 @@ spec:
         - "-layers=/layers"
         - "-platform=/platform"
         - "-report=/layers/report.toml"
-        - "-process-type=$(params.PROCESS_TYPE)"
         - "-skip-restore=$(params.SKIP_RESTORE)"
         - "-previous-image=$(params.APP_IMAGE)"
         - "-run-image=$(params.RUN_IMAGE)"
@@ -179,7 +175,7 @@ spec:
         - name: $(params.PLATFORM_DIR)
           mountPath: /platform
       securityContext:
-        runAsUser: 1000
+        runAsUser: 1001
         #################################################################
         #####  "runAsGroup" has been changed to "0" for Knative Functions
         runAsGroup: 0
