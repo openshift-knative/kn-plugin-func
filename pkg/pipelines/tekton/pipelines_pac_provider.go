@@ -133,7 +133,7 @@ func (pp *PipelinesProvider) createLocalPACResources(ctx context.Context, f fn.F
 // also creates PVC for the function source code
 func (pp *PipelinesProvider) createClusterPACResources(ctx context.Context, f fn.Function, metadata pipelines.PacMetadata) error {
 	// figure out pac installation namespace
-	installed, _, err := pac.DetectPACInstallation(ctx, "openshift-pipelines")
+	installed, _, err := pac.DetectPACInstallation(ctx)
 	if !installed {
 		errMsg := ""
 		if err != nil {
@@ -204,7 +204,7 @@ func (pp *PipelinesProvider) createClusterPACResources(ctx context.Context, f fn
 func (pp *PipelinesProvider) createRemotePACResources(ctx context.Context, f fn.Function, metadata pipelines.PacMetadata) error {
 
 	// figure out pac installation namespace
-	installed, installationNS, err := pac.DetectPACInstallation(ctx, "openshift-pipelines")
+	installed, installationNS, err := pac.DetectPACInstallation(ctx)
 	if !installed {
 		errMsg := ""
 		if err != nil {

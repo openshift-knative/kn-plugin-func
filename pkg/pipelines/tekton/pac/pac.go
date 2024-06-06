@@ -21,9 +21,12 @@ const (
 	routePacLabel          = "pipelines-as-code/route=controller"
 )
 
+// Namespaces where PaC is commonly installed.
+var usualSuspects = []string{"pipelines-as-code", "openshift-pipelines"}
+
 // DetectPACInstallation checks whether PAC is installed on the cluster
 // Taken and slightly modified from https://github.com/openshift-pipelines/pipelines-as-code/blob/6a7f043f9bb51d04ab729505b26446695595df1f/pkg/cmd/tknpac/bootstrap/bootstrap.go
-func DetectPACInstallation(ctx context.Context, wantedNamespace string) (bool, string, error) {
+func DetectPACInstallation(ctx context.Context) (bool, string, error) {
 	var installed bool
 
 	clientPac, cns, err := NewTektonPacClientAndResolvedNamespace("")
@@ -42,14 +45,15 @@ func DetectPACInstallation(ctx context.Context, wantedNamespace string) (bool, s
 	}
 
 	installed = true
-	if wantedNamespace != "" {
-		_, err := clientK8s.CoreV1().ConfigMaps(wantedNamespace).Get(ctx, infoConfigMap, metav1.GetOptions{})
-		if err == nil {
-			return installed, wantedNamespace, nil
+
+	for _, suspectedNS := range usualSuspects {
+		_, e := clientK8s.CoreV1().ConfigMaps(suspectedNS).Get(ctx, infoConfigMap, metav1.GetOptions{})
+		if e == nil {
+			return installed, suspectedNS, nil
 		}
-		return installed, "", fmt.Errorf("could not detect Pipelines as Code configmap in %s namespace : %w, please reinstall", wantedNamespace, err)
 	}
 
+	// Search all namespaces if the usual suspects do not contain the desired configmap.
 	cms, err := clientK8s.CoreV1().ConfigMaps("").List(ctx, metav1.ListOptions{
 		LabelSelector: configMapPacLabel,
 	})
