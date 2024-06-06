@@ -26,7 +26,7 @@ const (
 func DetectPACInstallation(ctx context.Context, wantedNamespace string) (bool, string, error) {
 	var installed bool
 
-	clientPac, _, err := NewTektonPacClientAndResolvedNamespace("")
+	clientPac, cns, err := NewTektonPacClientAndResolvedNamespace("")
 	if err != nil {
 		return false, "", err
 	}
@@ -36,7 +36,7 @@ func DetectPACInstallation(ctx context.Context, wantedNamespace string) (bool, s
 		return false, "", err
 	}
 
-	_, err = clientPac.Repositories("").List(ctx, metav1.ListOptions{})
+	_, err = clientPac.Repositories(cns).List(ctx, metav1.ListOptions{})
 	if err != nil && k8serrors.IsNotFound(err) {
 		return false, "", nil
 	}
