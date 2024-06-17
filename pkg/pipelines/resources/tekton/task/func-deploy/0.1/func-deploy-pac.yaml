@@ -24,6 +24,6 @@ spec:
       description: The workspace containing the function project
   steps:
     - name: func-deploy
-      image: "ghcr.io/knative/func-utils:latest"
+      image: "registry.redhat.io/openshift-serverless-1/func-utils-rhel8@sha256:aaec9703d03eda1fc1828ea3c9a921790f16715936cbcaa8c474165d26917ff7"
       script: |
         deploy $(params.path) "$(params.image)"
