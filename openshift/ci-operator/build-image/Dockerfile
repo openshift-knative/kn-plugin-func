@@ -1,4 +1,4 @@
-ARG OCP_VERSION=4.16
+ARG OCP_VERSION=4.17
 ARG GOLANG_VERSION=1.22
 FROM registry.ci.openshift.org/ocp/${OCP_VERSION}:tools as tools
 
@@ -8,5 +8,4 @@ COPY --from=tools /usr/bin/oc /usr/bin/
 RUN ln -s /usr/bin/oc /usr/bin/kubectl
 
 # Reset the goflags to avoid the -mod=vendor flag
-ENV GOFLAGS=
-
+ENV GOFLAGS=''
