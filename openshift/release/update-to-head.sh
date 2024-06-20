@@ -55,6 +55,9 @@ if [[ -d openshift/scripts ]]; then
     "$script"
   done
 fi
+
+./hack/update-codegen.sh
+
 git add .
 
 make generate/zz_filesystem_generated.go
