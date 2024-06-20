@@ -18,9 +18,6 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-# source of tasks (in this case to the project root folder)
-source_path=$(dirname $(cd $(dirname $0) && pwd ))
-
 openshift_pipelines() {
   echo "Installing Openshift Pipelines..."
 
@@ -62,24 +59,7 @@ wait_pipelines_ready() {
   fi
 }
 
-tekton_tasks() {
-  echo "Creating Pipeline tasks..."
-  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-deploy/0.1/func-deploy.yaml
-  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-  oc apply -f ${source_path}/pkg/pipelines/resources/tekton/task/func-buildpacks/0.1/func-buildpacks.yaml
-}
-
-tasks_only=false
-if [[ $# -ge 1 && "$1" == "--tasks-only" ]]; then
-  tasks_only=true
-elif [[ $# -ge 1 ]]; then
-  echo "Unknown parameters, use '--tasks-only' to only install Tekton Tasks"
-fi
-
-if [ $tasks_only = false ] ; then
-  openshift_pipelines
-  wait_pipelines_ready
-fi
-tekton_tasks
+openshift_pipelines
+wait_pipelines_ready
 
 echo Done
