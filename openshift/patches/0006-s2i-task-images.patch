@@ -1,8 +1,8 @@
-diff --git a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-index 696699580..7c25d5b67 100644
---- a/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-+++ b/pkg/pipelines/resources/tekton/task/func-s2i/0.1/func-s2i.yaml
-@@ -60,7 +60,7 @@ spec:
+diff --git a/pkg/pipelines/tekton/tasks.go b/pkg/pipelines/tekton/tasks.go
+index 239ddec25..3f0c28a0d 100644
+--- a/pkg/pipelines/tekton/tasks.go
++++ b/pkg/pipelines/tekton/tasks.go
+@@ -303,7 +303,7 @@ spec:
        description: Digest of the image just built.
    steps:
      - name: generate
@@ -11,7 +11,7 @@ index 696699580..7c25d5b67 100644
        workingDir: $(workspaces.source.path)
        args: ["$(params.ENV_VARS[*])"]
        script: |
-@@ -99,7 +99,7 @@ spec:
+@@ -342,7 +342,7 @@ spec:
          - mountPath: /env-vars
            name: env-vars
      - name: build
@@ -20,3 +20,4 @@ index 696699580..7c25d5b67 100644
        workingDir: /gen-source
        script: |
          TLS_VERIFY_FLAG=""
+
