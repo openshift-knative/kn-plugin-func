@@ -2,15 +2,6 @@ diff --git a/pkg/pipelines/tekton/tasks.go b/pkg/pipelines/tekton/tasks.go
 index 239ddec25..3f0c28a0d 100644
 --- a/pkg/pipelines/tekton/tasks.go
 +++ b/pkg/pipelines/tekton/tasks.go
-@@ -303,7 +303,7 @@ spec:
-       description: Digest of the image just built.
-   steps:
-     - name: generate
--      image: quay.io/boson/s2i:latest
-+      image: registry.redhat.io/ocp-tools-4-tech-preview/source-to-image-rhel8@sha256:98d8cb3a255641ca6a1bce854e5e2460c20de9fb9b28e3cc67eb459f122873dd
-       workingDir: $(workspaces.source.path)
-       args: ["$(params.ENV_VARS[*])"]
-       script: |
 @@ -342,7 +342,7 @@ spec:
          - mountPath: /env-vars
            name: env-vars
