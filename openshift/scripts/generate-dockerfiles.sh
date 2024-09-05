@@ -11,12 +11,12 @@ function install_generate_hack_tool() {
   local tmp_dir
   tmp_dir="$(mktemp -d)"
 
-	git clone https://github.com/openshift-knative/hack.git "${tmp_dir}"
-	cd "${tmp_dir}" && \
-	  go install github.com/openshift-knative/hack/cmd/generate && \
-	  cd - && rm -rf "${tmp_dir}"
+  git clone https://github.com/openshift-knative/hack.git "${tmp_dir}"
+  cd "${tmp_dir}" && \
+    go install github.com/openshift-knative/hack/cmd/generate && \
+    cd - && rm -rf "${tmp_dir}"
 
-	return $?
+  return $?
 }
 
 repo_root_dir=$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../..
