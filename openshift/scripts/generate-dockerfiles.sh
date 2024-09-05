@@ -8,7 +8,8 @@ set -o nounset
 set -o pipefail
 
 function install_generate_hack_tool() {
-  tmp_dir=$(mktemp -d)
+  local tmp_dir
+  tmp_dir="$(mktemp -d)"
 
 	git clone https://github.com/openshift-knative/hack.git "${tmp_dir}"
 	cd "${tmp_dir}" && \
