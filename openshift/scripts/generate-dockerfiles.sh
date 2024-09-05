@@ -23,7 +23,7 @@ repo_root_dir=$(dirname "$(realpath "${BASH_SOURCE[0]}")")/../..
 
 install_generate_hack_tool || exit 1
 
-$(go env GOPATH)/bin/generate \
+"$(go env GOPATH)"/bin/generate \
   --root-dir "${repo_root_dir}" \
   --generators dockerfile \
   --dockerfile-image-builder-fmt "registry.ci.openshift.org/openshift/release:rhel-9-release-golang-%s-openshift-4.17" \
