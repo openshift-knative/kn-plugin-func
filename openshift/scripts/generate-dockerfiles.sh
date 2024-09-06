@@ -28,8 +28,4 @@ install_generate_hack_tool || exit 1
   --generators dockerfile \
   --dockerfile-image-builder-fmt "registry.ci.openshift.org/openshift/release:rhel-9-release-golang-%s-openshift-4.17" \
   --includes cmd/func-util \
-  --additional-packages socat \
-  --additional-packages tar \
-  --sym-link-names /usr/local/bin/deploy \
-  --sym-link-names /usr/local/bin/scaffold \
-  --sym-link-names /usr/local/bin/s2i
+  --template-name "func-util"
