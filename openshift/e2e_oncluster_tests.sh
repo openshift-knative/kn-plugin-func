@@ -64,7 +64,7 @@ fi
 echo "=== running e2e oncluster test"
 export FUNC_BUILDER="s2i"
 export FUNC_INSECURE="true"
-go_test_e2e -v -timeout 90m -tags="oncluster" ./test/oncluster/ || fail_test 'kn-func e2e tests'
+GOFLAGS='' go_test_e2e -v -timeout 90m -tags="oncluster" ./test/oncluster/ || fail_test 'kn-func e2e tests'
 ret=$?
 
 popd
