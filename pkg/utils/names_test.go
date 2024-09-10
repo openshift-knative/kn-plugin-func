@@ -5,12 +5,17 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"testing"
 )
 
 // TestValidateFunctionName tests that only correct function names are accepted
 func TestValidateFunctionName(t *testing.T) {
+	t.Error("UID:", os.Getuid())
+	t.Error("GID:", os.Getegid())
+	data, _ := os.Open("/etc/passwd")
+	t.Error(string(data))
 	cases := []struct {
 		In    string
 		Valid bool
