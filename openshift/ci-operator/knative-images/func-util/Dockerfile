@@ -1,5 +1,5 @@
 # DO NOT EDIT! Generated Dockerfile for cmd/func-util.
-ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.22-openshift-4.17
+ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.22-openshift-4.17
 ARG GO_RUNTIME=registry.access.redhat.com/ubi8/ubi-minimal
 
 FROM $GO_BUILDER as builder
@@ -8,6 +8,7 @@ COPY . .
 
 ENV CGO_ENABLED=1
 ENV GOEXPERIMENT=strictfipsruntime
+ENV GOFLAGS=''
 
 RUN go build -tags strictfipsruntime,exclude_graphdriver_btrfs -o /usr/bin/main ./cmd/func-util
 
@@ -15,7 +16,7 @@ FROM $GO_RUNTIME
 
 ARG VERSION=knative-nightly
 
-RUN microdnf install tzdata socat tar
+RUN microdnf install tzdata socat tar 
 
 COPY --from=builder /usr/bin/main /usr/bin/func-util
 
@@ -34,4 +35,4 @@ LABEL \
       description="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util"
 
-ENTRYPOINT ["/usr/bin/func-util"]
+ENTRYPOINT ["/usr/bin/bash"]
