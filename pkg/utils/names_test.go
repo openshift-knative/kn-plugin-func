@@ -14,7 +14,7 @@ import (
 func TestValidateFunctionName(t *testing.T) {
 	t.Error("UID:", os.Getuid())
 	t.Error("GID:", os.Getegid())
-	data, _ := os.Open("/etc/passwd")
+	data, _ := os.ReadFile("/etc/passwd")
 	t.Error(string(data))
 	cases := []struct {
 		In    string
