@@ -32,6 +32,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+FUNC_UTILS_IMG="${FUNC_UTILS_IMG:-ghcr.io/knative/func-utils:latest}"
+LDFLAGS="-X knative.dev/func/pkg/k8s.SocatImage=${FUNC_UTILS_IMG}"
+LDFLAGS+=" -X knative.dev/func/pkg/k8s.TarImage=${FUNC_UTILS_IMG}"
+LDFLAGS+=" -X knative.dev/func/pkg/pipelines/tekton.FuncUtilImage=${FUNC_UTILS_IMG}"
+export GOFLAGS="'-ldflags=${LDFLAGS}'"
+
 source "$(go run knative.dev/hack/cmd/script e2e-tests.sh)"
 
 pushd "$(dirname "$0")/.."
