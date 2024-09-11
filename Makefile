@@ -29,12 +29,14 @@ VERS         ?= $(shell git describe --tags --match 'v*')
 KVER         ?= $(shell git describe --tags --match 'knative-*')
 
 LDFLAGS      := -X knative.dev/func/pkg/app.vers=$(VERS) -X knative.dev/func/pkg/app.kver=$(KVER) -X knative.dev/func/pkg/app.hash=$(HASH)
-ifneq ($(FUNC_REPO_REF),)
-  LDFLAGS      += -X knative.dev/func/pkg/pipelines/tekton.FuncRepoRef=$(FUNC_REPO_REF)
-endif
-ifneq ($(FUNC_REPO_BRANCH_REF),)
-  LDFLAGS      += -X knative.dev/func/pkg/pipelines/tekton.FuncRepoBranchRef=$(FUNC_REPO_BRANCH_REF)
-endif
+
+FUNC_UTILS_IMG ?= ghcr.io/knative/func-utils:latest
+LDFLAGS += -X knative.dev/func/pkg/k8s.SocatImage=$(FUNC_UTILS_IMG)
+LDFLAGS += -X knative.dev/func/pkg/k8s.TarImage=$(FUNC_UTILS_IMG)
+LDFLAGS += -X knative.dev/func/pkg/pipelines/tekton.FuncUtilImage=$(FUNC_UTILS_IMG)
+
+GOFLAGS      := "-ldflags=$(LDFLAGS)"
+export GOFLAGS
 
 MAKEFILE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -62,11 +64,11 @@ build: $(BIN) ## (default) Build binary for current OS
 
 .PHONY: $(BIN)
 $(BIN): generate/zz_filesystem_generated.go
-	env CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" ./cmd/$(BIN)
+	env CGO_ENABLED=0 go build ./cmd/$(BIN)
 
 .PHONY: test
 test: generate/zz_filesystem_generated.go ## Run core unit tests
-	go test -ldflags "$(LDFLAGS)" -race -cover -coverprofile=coverage.txt ./...
+	go test -race -cover -coverprofile=coverage.txt ./...
 
 .PHONY: check
 check: $(BIN_GOLANGCI_LINT) ## Check code quality (lint)
@@ -195,12 +197,12 @@ templates/certs/ca-certificates.crt:
 ###################
 
 test-integration: ## Run integration tests using an available cluster.
-	go test -ldflags "$(LDFLAGS)" -tags integration -timeout 30m --coverprofile=coverage.txt ./... -v
+	go test -tags integration -timeout 30m --coverprofile=coverage.txt ./... -v
 
 .PHONY: func-instrumented
 
 func-instrumented: ## Func binary that is instrumented for e2e tests
-	env CGO_ENABLED=1 go build -ldflags "$(LDFLAGS)" -cover -o func ./cmd/$(BIN)
+	env CGO_ENABLED=1 go build -cover -o func ./cmd/$(BIN)
 
 test-e2e: func-instrumented ## Run end-to-end tests using an available cluster.
 	./test/e2e_extended_tests.sh
