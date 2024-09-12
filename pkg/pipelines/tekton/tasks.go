@@ -101,7 +101,7 @@ spec:
 
   steps:
     - name: prepare
-      image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+      image: registry.access.redhat.com/ubi8@sha256:fbfce63673a271ecb857faac4412442fe7aeb3a84f564d16a790ca7b5c8b7105
       args:
         - "--env-vars"
         - "$(params.ENV_VARS[*])"
@@ -207,7 +207,7 @@ spec:
         runAsGroup: 0
 
     - name: results
-      image: docker.io/library/bash:5.1.4@sha256:b208215a4655538be652b2769d82e576bc4d0a2bb132144c060efc5be8c3f5d6
+      image: registry.access.redhat.com/ubi8@sha256:fbfce63673a271ecb857faac4412442fe7aeb3a84f564d16a790ca7b5c8b7105
       script: |
         #!/usr/bin/env bash
         set -e
