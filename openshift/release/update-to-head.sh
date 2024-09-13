@@ -24,12 +24,8 @@
 set -e
 REPO_NAME=$(basename $(git rev-parse --show-toplevel))
 
-# Custom files
-custom_files=$(cat <<EOT | tr '\n' ' '
-openshift
-EOT
-)
-openshift_files_msg=":open_file_folder: update OpenShift specific files"
+source openshift/release/common.sh
+
 robot_trigger_msg=":robot: triggering CI on branch 'release-next' after synching from upstream/main"
 
 # Reset release-next to upstream/main.
@@ -38,31 +34,12 @@ git checkout upstream/main -B release-next
 
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
-git checkout openshift/main $custom_files
+git checkout openshift/main "$MIDSTREAM_CUSTOM_FILES"
 
-# Apply midstream patches
-if [[ -d openshift/patches ]]; then
-  git apply openshift/patches/*
-fi
-# Apply midstream overrides
-if [[ -d openshift/overrides ]]; then
-  cp -r openshift/overrides/. .
-  rm -rf openshift/overrides
-fi
-# Apply midstream patches using scripts
-if [[ -d openshift/scripts ]]; then
-  for script in openshift/scripts/*.sh; do
-    "$script"
-  done
-fi
-
-./hack/update-codegen.sh
+openshift/relase/apply_midstream_patches.sh
 
 git add .
-
-make generate/zz_filesystem_generated.go
-git add $custom_files generate/zz_filesystem_generated.go templates/certs/ca-certificates.crt 
-git commit -m "${openshift_files_msg}"
+git commit -m ":open_file_folder: Update OpenShift specific files"
 
 git push -f openshift release-next
 
