@@ -146,9 +146,10 @@ func ServeRepo(name string, t *testing.T) string {
 	// This is to prevent "fatal: detected dubious ownership in repository at <source_reposutory_path>" while executing
 	// unit tests on other environments (such as Prow CI)
 	cmd := exec.Command("git", "config", "--global", "--add", "safe.directory", abs)
-	_, err := cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatal(err)
+		t.Log(string(out))
+		t.Fatalf("cannot add safe directory: %v", err)
 	}
 	return fmt.Sprintf("%v/%v", url, repo)
 }
