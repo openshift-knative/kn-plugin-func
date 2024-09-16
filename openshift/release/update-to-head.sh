@@ -22,7 +22,7 @@
 # Usage: update-to-head.sh
 
 set -e
-REPO_NAME=$(basename $(git rev-parse --show-toplevel))
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
 
 source openshift/release/common.sh
 
@@ -34,7 +34,8 @@ git checkout upstream/main -B release-next
 
 # Update openshift's main and take all needed files from there.
 git fetch openshift main
-git checkout openshift/main "$MIDSTREAM_CUSTOM_FILES"
+# shellcheck disable=SC2086
+git checkout openshift/main $MIDSTREAM_CUSTOM_FILES
 
 openshift/relase/apply_midstream_patches.sh
 

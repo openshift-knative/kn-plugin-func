@@ -29,7 +29,8 @@ git checkout -b "$target" "$release"
 
 # Copy the midstream specific files from the OPENSHIFT/main branch.
 git fetch openshift main
-git checkout openshift/main -- "$MIDSTREAM_CUSTOM_FILES"
+# shellcheck disable=SC2086
+git checkout openshift/main -- $MIDSTREAM_CUSTOM_FILES
 
 openshift/release/apply-midstream-patches.sh
 
