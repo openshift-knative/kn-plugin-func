@@ -24,7 +24,7 @@ TMPDIR=$(mktemp -d knativeFuncBranchingCheckXXXX -p /tmp/)
 readonly TMPDIR
 
 git fetch upstream --tags
-git fetch openshift --tags
+git fetch openshift
 
 # Ignore release 1.7-1.14 and only sync starting from 1.15
 cat >> "$TMPDIR"/midstream_branches <<EOF
