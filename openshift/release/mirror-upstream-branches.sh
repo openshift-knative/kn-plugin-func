@@ -18,8 +18,9 @@
 # This should be run from the basedir of the repo with no arguments
 
 
-set -ex
+set -exo pipefail
 readonly TMPDIR=$(mktemp -d knativeFuncBranchingCheckXXXX -p /tmp/)
+
 
 git fetch upstream --tags
 git fetch openshift --tags
