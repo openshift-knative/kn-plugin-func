@@ -21,10 +21,13 @@
 # Synchs the release-next branch to main and then triggers CI
 # Usage: update-to-head.sh
 
-set -e
+set -eo pipefail
 REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
 
 source openshift/release/common.sh
+
+# Check if there's an upstream release we need to mirror downstream
+openshift/release/mirror-upstream-branches.sh
 
 robot_trigger_msg=":robot: triggering CI on branch 'release-next' after synching from upstream/main"
 
