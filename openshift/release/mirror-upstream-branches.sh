@@ -19,8 +19,9 @@
 
 
 set -exo pipefail
-readonly TMPDIR=$(mktemp -d knativeFuncBranchingCheckXXXX -p /tmp/)
 
+TMPDIR=$(mktemp -d knativeFuncBranchingCheckXXXX -p /tmp/)
+readonly TMPDIR
 
 git fetch upstream --tags
 git fetch openshift --tags
