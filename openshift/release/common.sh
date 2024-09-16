@@ -18,6 +18,5 @@
 MIDSTREAM_CUSTOM_FILES=$(cat <<EOT | tr '\n' ' '
 openshift
 OWNERS
-OWNERS_ALIASES
 EOT
 )
