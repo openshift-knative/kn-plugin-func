@@ -27,10 +27,6 @@ target=$2
 git fetch upstream -v --tags
 git checkout -b "$target" "$release"
 
-# Remove GH Action hooks from upstream
-rm -rf .github/workflows
-git commit -sm ":fire: remove unneeded workflows" .github/
-
 # Copy the midstream specific files from the OPENSHIFT/main branch.
 git fetch openshift main
 git checkout openshift/main -- "$MIDSTREAM_CUSTOM_FILES"
