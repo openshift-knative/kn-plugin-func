@@ -36,6 +36,7 @@ cat >> "$TMPDIR"/midstream_branches <<EOF
 1.12
 1.13
 1.14
+1.15
 EOF
 
 git branch --list -a "upstream/release-1.*" | cut -f3 -d'/' | cut -f2 -d'-' > "$TMPDIR"/upstream_branches
