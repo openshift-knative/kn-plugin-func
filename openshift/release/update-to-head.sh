@@ -40,7 +40,7 @@ git fetch openshift main
 # shellcheck disable=SC2086
 git checkout openshift/main $MIDSTREAM_CUSTOM_FILES
 
-openshift/relase/apply_midstream_patches.sh
+openshift/relase/apply-midstream-patches.sh
 
 git add .
 git commit -m ":open_file_folder: Update OpenShift specific files"
