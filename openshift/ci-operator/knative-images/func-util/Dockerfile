@@ -16,7 +16,7 @@ FROM $GO_RUNTIME
 
 ARG VERSION=knative-nightly
 
-RUN microdnf install tzdata socat tar 
+RUN microdnf install socat tar 
 
 COPY --from=builder /usr/bin/main /usr/bin/func-util
 
@@ -33,6 +33,8 @@ LABEL \
       summary="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       maintainer="serverless-support@redhat.com" \
       description="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
-      io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util"
+      io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
+      io.k8s.description="Red Hat OpenShift Serverless Kn Plugin Func Func Util" \
+      io.openshift.tags="func-util"
 
 ENTRYPOINT ["/usr/bin/bash"]
