@@ -1,4 +1,23 @@
-apiVersion: tekton.dev/v1beta1
+#!/usr/bin/env bash
+#
+# This script is executed during upstream/midstream sync to release-next branch
+# It includes Openshift WebConsole NodeJS Pipeline
+#
+
+tnk_tasks_file="cmd/tkn_tasks.go"
+pipelines_file="pkg/pipelines/tekton/pipelines.go"
+
+sed -i 's/tekton.GetClusterTasks())/tekton.GetClusterTasks()+"\\n---\\n"+tekton.GetDevConsolePipelines())/' "$tnk_tasks_file"
+
+cat << 'EOF' > "$pipelines_file"
+package tekton
+
+func GetDevConsolePipelines() string {
+	return GetNodeJSPipeline()
+}
+
+func GetNodeJSPipeline() string {
+	return `apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: devconsole-nodejs-function-pipeline
@@ -89,3 +108,6 @@ spec:
         - name: source
           workspace: source-workspace
   finally: []
+`
+}
+EOF
