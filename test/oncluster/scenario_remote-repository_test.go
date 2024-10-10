@@ -89,7 +89,6 @@ func TestRemoteRepository(t *testing.T) {
 
 	knFunc.Exec("deploy", "--registry", common.GetRegistry(), "--remote")
 	defer knFunc.Exec("delete")
-	_, functionUrl := common.WaitForFunctionReady(t, funcName)
 
 	result := knFunc.Exec("invoke", "-p", funcPath)
 	assert.Assert(t, strings.Contains(result.Out, "HELLO TEST"))
