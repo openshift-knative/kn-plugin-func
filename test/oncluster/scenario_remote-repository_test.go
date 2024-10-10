@@ -10,7 +10,6 @@ import (
 
 	"gotest.tools/v3/assert"
 	"knative.dev/func/test/common"
-	"knative.dev/func/test/testhttp"
 )
 
 func setupRemoteRepository(t *testing.T) (reposutoryUrl string) {
@@ -92,7 +91,7 @@ func TestRemoteRepository(t *testing.T) {
 	defer knFunc.Exec("delete")
 	_, functionUrl := common.WaitForFunctionReady(t, funcName)
 
-	_, funcResponse := testhttp.TestGet(t, functionUrl)
-	assert.Assert(t, strings.Contains(funcResponse, "HELLO TEST"))
+	result := knFunc.Exec("invoke", "-p", funcPath)
+	assert.Assert(t, strings.Contains(result.Out, "HELLO TEST"))
 
 }
