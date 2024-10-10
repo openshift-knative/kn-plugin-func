@@ -83,7 +83,7 @@ func TestRemoteRepository(t *testing.T) {
 	knFunc.Exec("create",
 		"--language", "go",
 		"--template", "testhello",
-		"--repository", gitRepoUrl,
+		"--repository", gitRepoUrl+"#main", // let's enforce branch (avoid failure on CI PROW)
 		funcPath)
 
 	knFunc.SourceDir = funcPath
