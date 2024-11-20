@@ -4,6 +4,7 @@ ARG GO_RUNTIME=registry.access.redhat.com/ubi8/ubi-minimal
 
 FROM $GO_BUILDER as builder
 
+WORKDIR /workspace
 COPY . .
 
 ENV CGO_ENABLED=1
@@ -16,9 +17,10 @@ FROM $GO_RUNTIME
 
 ARG VERSION=knative-nightly
 
-RUN microdnf install socat tar 
+RUN microdnf install socat tar
 
 COPY --from=builder /usr/bin/main /usr/bin/func-util
+COPY LICENSE /licenses/
 
 RUN ln -s /usr/bin/func-util /usr/local/bin/deploy && \
 	ln -s /usr/bin/func-util /usr/local/bin/scaffold && \
