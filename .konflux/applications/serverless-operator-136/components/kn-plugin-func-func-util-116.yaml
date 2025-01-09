@@ -1,0 +1,22 @@
+apiVersion: appstudio.redhat.com/v1alpha1
+kind: Component
+metadata:
+  annotations:
+    build.appstudio.openshift.io/pipeline: '{"name":"docker-build","bundle":"latest"}'
+    build.appstudio.openshift.io/request: configure-pac-no-mr
+  name: kn-plugin-func-func-util-116
+spec:
+  componentName: kn-plugin-func-func-util-116
+  application: serverless-operator-136
+   
+  build-nudges-ref:
+    
+    - "serverless-bundle-136"
+    
+  
+  source:
+    git:
+      url: https://github.com/openshift-knative/kn-plugin-func.git
+      context: 
+      dockerfileUrl: openshift/ci-operator/knative-images/func-util/Dockerfile
+      revision: release-v1.16
