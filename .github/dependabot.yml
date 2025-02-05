@@ -19,6 +19,47 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - istio.io/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+                - istio.io/*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - istio.io/*
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.15
       commit-message:
         prefix: '[release-v1.15][gomod]'
@@ -44,6 +85,41 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.15
       commit-message:
         prefix: '[release-v1.15][maven]'
@@ -67,6 +143,47 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - istio.io/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+                - istio.io/*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - istio.io/*
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.16
       commit-message:
         prefix: '[release-v1.16][gomod]'
@@ -92,6 +209,41 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.16
       commit-message:
         prefix: '[release-v1.16][maven]'
@@ -115,6 +267,47 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - istio.io/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - knative.dev/*
+                - k8s.io/*
+                - github.com/openshift/*
+                - sigs.k8s.io/controller-runtime*
+                - istio.io/*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - istio.io/*
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.17
       commit-message:
         prefix: '[release-v1.17][gomod]'
@@ -140,6 +333,41 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        minor:
+            update-types:
+                - minor
+            patterns:
+                - '*'
+            applies-to: version-updates
+            exclude-patterns:
+                - io.vertx*
+                - com.redhat.quarkus.platform*
+                - io.quarkus*
+        patch:
+            update-types:
+                - patch
+            patterns:
+                - '*'
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            patterns:
+                - '*'
+            applies-to: security-updates
       target-branch: release-v1.17
       commit-message:
         prefix: '[release-v1.17][maven]'
