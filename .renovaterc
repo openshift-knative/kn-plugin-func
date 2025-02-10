@@ -1,0 +1,6 @@
+{
+  "postUpgradeTasks": {
+    "commands": ["./hack/update-codegen.sh"],
+    "executionMode": "update"
+  }
+}
