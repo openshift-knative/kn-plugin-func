@@ -24,7 +24,8 @@ COPY LICENSE /licenses/
 
 RUN ln -s /usr/bin/func-util /usr/local/bin/deploy && \
 	ln -s /usr/bin/func-util /usr/local/bin/scaffold && \
-	ln -s /usr/bin/func-util /usr/local/bin/s2i
+	ln -s /usr/bin/func-util /usr/local/bin/s2i && \
+	ln -s /usr/bin/func-util /usr/local/bin/s2i-generate
 
 USER 65532
 
