@@ -87,7 +87,7 @@ function get_latest_release_version() {
 
 # Returns whether the current branch is a release branch.
 function is_release_branch() {
-  [[ $(current_branch) =~ ^release-[0-9\.]+$ ]]
+  [[ $(current_branch) =~ ^release-v[0-9\.]+$ ]]
 }
 
 # Returns the current branch.
