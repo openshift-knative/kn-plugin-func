@@ -23,8 +23,8 @@ require (
 	github.com/docker/docker v27.3.1+incompatible
 	github.com/docker/docker-credential-helpers v0.8.2
 	github.com/docker/go-connections v0.5.0
-	github.com/go-git/go-billy/v5 v5.6.1
-	github.com/go-git/go-git/v5 v5.13.1
+	github.com/go-git/go-billy/v5 v5.6.2
+	github.com/go-git/go-git/v5 v5.13.2
 	github.com/google/go-cmp v0.6.0
 	github.com/google/go-containerregistry v0.20.2
 	github.com/google/go-github/v49 v49.1.0
@@ -87,7 +87,7 @@ require (
 	github.com/GoogleContainerTools/kaniko v1.23.2 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Microsoft/hcsshim v0.12.7 // indirect
-	github.com/ProtonMail/go-crypto v1.1.3 // indirect
+	github.com/ProtonMail/go-crypto v1.1.5 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antlr/antlr4/runtime/Go/antlr v1.4.10 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
@@ -226,7 +226,7 @@ require (
 	github.com/ostreedev/ostree-go v0.0.0-20210805093236-719684c64e4f // indirect
 	github.com/pelletier/go-toml/v2 v2.2.1 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/pjbgf/sha1cd v0.3.0 // indirect
+	github.com/pjbgf/sha1cd v0.3.2 // indirect
 	github.com/prometheus/client_golang v1.20.5 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.60.1 // indirect
