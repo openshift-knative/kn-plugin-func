@@ -30,7 +30,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hectane/go-acl v0.0.0-20230122075934-ca0b05cb1adb
 	github.com/heroku/color v0.0.6
-	github.com/hinshun/vt10x v0.0.0-20220228203356-1ab2cad5fd82
+	github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02
 	github.com/manifestival/client-go-client v0.5.0
 	github.com/manifestival/manifestival v0.7.2
 	github.com/opencontainers/image-spec v1.1.0
