@@ -1,6 +1,6 @@
 module knative.dev/func
 
-go 1.22.0
+go 1.23.0
 
 // this is required bacause of bad dep in github.com/openshift-pipelines/pipelines-as-code
 replace k8s.io/client-go => k8s.io/client-go v0.29.3
@@ -50,7 +50,7 @@ require (
 	golang.org/x/crypto v0.32.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	golang.org/x/net v0.34.0
-	golang.org/x/oauth2 v0.21.0
+	golang.org/x/oauth2 v0.28.0
 	golang.org/x/sync v0.10.0
 	golang.org/x/term v0.28.0
 	gopkg.in/yaml.v2 v2.4.0
