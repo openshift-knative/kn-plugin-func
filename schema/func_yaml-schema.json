@@ -45,7 +45,7 @@
 					"type": "string",
 					"description": "PVCSize specifies the size of persistent volume claim used to store function\nwhen using deployment and remote build process (only relevant when Remote is true)."
 				},
-				"mounts": {
+				"volumes": {
 					"items": {
 						"$schema": "http://json-schema.org/draft-04/schema#",
 						"$ref": "#/definitions/MountSpec"
@@ -275,15 +275,17 @@
 		},
 		"MountSpec": {
 			"required": [
-				"source",
-				"destination"
+				"hostPath",
+				"path"
 			],
 			"properties": {
-				"source": {
-					"type": "string"
+				"hostPath": {
+					"type": "string",
+					"description": "Path on the local machine"
 				},
-				"destination": {
-					"type": "string"
+				"path": {
+					"type": "string",
+					"description": "Path in the build container"
 				}
 			},
 			"additionalProperties": false,
