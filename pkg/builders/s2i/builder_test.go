@@ -279,11 +279,11 @@ func (m mockDocker) ContainerWait(ctx context.Context, container string, conditi
 	panic("implement me")
 }
 
-func (m mockDocker) CopyToContainer(ctx context.Context, container, path string, content io.Reader, opts container.CopyToContainerOptions) error {
+func (m mockDocker) CopyToContainer(ctx context.Context, container, path string, content io.Reader, opts types.CopyToContainerOptions) error {
 	panic("implement me")
 }
 
-func (m mockDocker) CopyFromContainer(ctx context.Context, container, srcPath string) (io.ReadCloser, container.PathStat, error) {
+func (m mockDocker) CopyFromContainer(ctx context.Context, container, srcPath string) (io.ReadCloser, types.ContainerPathStat, error) {
 	panic("implement me")
 }
 
