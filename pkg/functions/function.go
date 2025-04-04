@@ -144,6 +144,16 @@ type BuildSpec struct {
 	// Image stores last built image name NOT in func.yaml, but instead
 	// in .func/built-image
 	Image string `yaml:"-"`
+
+	// Mounts used in build phase. This is useful in particular for paketo bindings.
+	Mounts []MountSpec `yaml:"volumes,omitempty"`
+}
+
+type MountSpec struct {
+	// Path on the local machine
+	Source string `yaml:"hostPath"`
+	// Path in the build container
+	Destination string `yaml:"path"`
 }
 
 // RunSpec

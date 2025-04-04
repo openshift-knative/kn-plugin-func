@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -178,6 +179,12 @@ func (b *Builder) Build(ctx context.Context, f fn.Function, platforms []fn.Platf
 		opts.ContainerConfig.Network = "host"
 	}
 
+	var bindings = make([]string, 0, len(f.Build.Mounts))
+	for _, m := range f.Build.Mounts {
+		bindings = append(bindings, fmt.Sprintf("%s:%s", m.Source, m.Destination))
+	}
+	opts.ContainerConfig.Volumes = bindings
+
 	// only trust our known builders
 	opts.TrustBuilder = TrustBuilder
 
@@ -242,6 +249,9 @@ func isPodmanV43(ctx context.Context, cli client.CommonAPIClient) (b bool, err e
 // TrustBuilder determines whether the builder image should be trusted
 // based on a set of trusted builder image registry prefixes.
 func TrustBuilder(b string) bool {
+	if isLocalhost(b) {
+		return true
+	}
 	for _, v := range trustedBuilderImagePrefixes {
 		// Ensure that all entries in this list are terminated with a trailing "/"
 		if !strings.HasSuffix(v, "/") {
@@ -252,6 +262,14 @@ func TrustBuilder(b string) bool {
 		}
 	}
 	return false
+}
+
+func isLocalhost(img string) bool {
+	// Parsing logic is broken for localhost in go-containerregistry.
+	// See: https://github.com/google/go-containerregistry/issues/2048
+	// So I went for regex.
+	localhostRE := regexp.MustCompile(`^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?/.+$`)
+	return localhostRE.MatchString(img)
 }
 
 // Builder Image chooses the correct builder image or defaults.

@@ -44,6 +44,14 @@
 				"pvcSize": {
 					"type": "string",
 					"description": "PVCSize specifies the size of persistent volume claim used to store function\nwhen using deployment and remote build process (only relevant when Remote is true)."
+				},
+				"volumes": {
+					"items": {
+						"$schema": "http://json-schema.org/draft-04/schema#",
+						"$ref": "#/definitions/MountSpec"
+					},
+					"type": "array",
+					"description": "Mounts used in build phase. This is useful in particular for paketo bindings."
 				}
 			},
 			"additionalProperties": false,
@@ -260,6 +268,24 @@
 				"value": {
 					"pattern": "^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$",
 					"type": "string"
+				}
+			},
+			"additionalProperties": false,
+			"type": "object"
+		},
+		"MountSpec": {
+			"required": [
+				"hostPath",
+				"path"
+			],
+			"properties": {
+				"hostPath": {
+					"type": "string",
+					"description": "Path on the local machine"
+				},
+				"path": {
+					"type": "string",
+					"description": "Path in the build container"
 				}
 			},
 			"additionalProperties": false,
