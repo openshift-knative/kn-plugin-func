@@ -9,11 +9,6 @@ spec:
   componentName: kn-plugin-func-func-util-115
   application: serverless-operator-135
    
-  build-nudges-ref:
-    
-    - "serverless-bundle-135"
-    
-  
   source:
     git:
       url: https://github.com/openshift-knative/kn-plugin-func.git
