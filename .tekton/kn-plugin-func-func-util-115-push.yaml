@@ -53,7 +53,8 @@ spec:
               memory: 4Gi
   pipelineRef:
     name: docker-build
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-kn-plugin-func-func-util-115
   workspaces:
     - name: git-auth
       secret:
