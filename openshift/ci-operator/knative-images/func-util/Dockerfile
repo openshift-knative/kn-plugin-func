@@ -15,7 +15,7 @@ RUN go build -tags strictfipsruntime,exclude_graphdriver_btrfs -o /usr/bin/main 
 
 FROM $GO_RUNTIME
 
-ARG VERSION=knative-nightly
+ARG VERSION=knative-v1.18
 
 RUN microdnf install socat tar
 
