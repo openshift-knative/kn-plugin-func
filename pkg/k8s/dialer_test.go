@@ -204,7 +204,7 @@ func TestDialUnreachable(t *testing.T) {
 		t.Error("error was expected but got nil")
 		return
 	}
-	if !strings.Contains(err.Error(), "connection refused") {
+	if !strings.Contains(err.Error(), "connection refused") && !strings.Contains(err.Error(), "Connection refused") {
 		t.Errorf("error %q doesn't contain expected substring: ", err.Error())
 	}
 }
