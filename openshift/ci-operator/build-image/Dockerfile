@@ -9,6 +9,7 @@ USER 0:0
 RUN yum update -y go
 USER 1001:0
 
+
 ARG TARGETARCH
 
 COPY --from=tools /usr/share/openshift/linux_$TARGETARCH/oc.rhel8 /usr/bin/oc
