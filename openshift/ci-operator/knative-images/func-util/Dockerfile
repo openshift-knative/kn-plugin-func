@@ -1,5 +1,5 @@
 # DO NOT EDIT! Generated Dockerfile for cmd/func-util.
-ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.24-openshift-4.20
+ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.24-openshift-4.20
 ARG GO_RUNTIME=registry.access.redhat.com/ubi8/ubi-minimal
 
 FROM $GO_BUILDER as builder
@@ -15,7 +15,7 @@ RUN go build -tags strictfipsruntime,exclude_graphdriver_btrfs -o /usr/bin/main 
 
 FROM $GO_RUNTIME
 
-ARG VERSION=knative-nightly
+ARG VERSION=knative-v1.19
 
 RUN microdnf install socat tar
 
