@@ -46,6 +46,7 @@ spec:
       default: 'image:///usr/libexec/s2i'
   tasks:
     {{.GitCloneTaskRef}}
+      {{.GitCloneTaskSpec}}
     - name: scaffold
       params:
         - name: path
