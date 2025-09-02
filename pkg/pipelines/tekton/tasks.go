@@ -460,10 +460,10 @@ spec:
 `, DeployerImage)
 }
 
-func getGitCloneTask() string {
+func getGitCloneTask() (string, error) {
 	c, err := k8s.NewDynamicClient()
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("cannot create k8s client: %v", err)
 	}
 	taskGVR := schema.GroupVersionResource{
 		Group:    "tekton.dev",
@@ -472,7 +472,7 @@ func getGitCloneTask() string {
 	}
 	o, err := c.Resource(taskGVR).Namespace("openshift-pipelines").Get(context.Background(), "git-clone", metav1.GetOptions{})
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("cannot get git-clone task: %v", err)
 	}
 	delete(o.Object["metadata"].(map[string]any), "managedFields")
 
@@ -488,9 +488,9 @@ func getGitCloneTask() string {
 
 	bs, err := yaml.Marshal(o.Object)
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("cannot marshal object to yaml: %v", err)
 	}
-	return string(bs)
+	return string(bs), nil
 }
 
 // GetClusterTasks returns multi-document yaml containing tekton tasks used by func.

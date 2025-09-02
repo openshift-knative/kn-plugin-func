@@ -128,13 +128,21 @@ func createPipelineTemplatePAC(f fn.Function, labels map[string]string) error {
 		{getS2ITask(), &data.FuncS2iTaskRef},
 		{getDeployTask(), &data.FuncDeployTaskRef},
 		{getScaffoldTask(), &data.FuncScaffoldTaskRef},
-		{getGitCloneTask(), &data.GitCloneTaskSpec},
 	} {
 		ts, err := getTaskSpec(val.ref)
 		if err != nil {
 			return err
 		}
 		*val.field = ts
+	}
+
+	gct, err := getGitCloneTask()
+	if err != nil {
+		return fmt.Errorf("failed to get git task: %v", err)
+	}
+	data.GitCloneTaskSpec, err = getTaskSpec(gct)
+	if err != nil {
+		return fmt.Errorf("failed to get git task spec: %v", err)
 	}
 
 	var template string
@@ -311,7 +319,11 @@ func createAndApplyPipelineTemplate(f fn.Function, namespace string, labels map[
 	if f.Build.Git.URL != "" {
 		runAfterFetchSources = runAfterFetchSourcesRef
 		gitCloneTaskRef = taskGitCloneTaskRef
-		ts, err := getTaskSpec(getGitCloneTask())
+		gct, err := getGitCloneTask()
+		if err != nil {
+			return fmt.Errorf("error getting git clone task: %v", err)
+		}
+		ts, err := getTaskSpec(gct)
 		if err != nil {
 			return err
 		}
