@@ -486,6 +486,14 @@ func getGitCloneTask() (string, error) {
 	wss = append(wss, ws{Name: "cache", Optional: true})
 	spec["workspaces"] = wss
 
+	stepTemplate := spec["stepTemplate"].(map[string]any)
+	delete(stepTemplate, "computeResources")
+
+	steps := spec["steps"].([]any)
+	for idx := range steps {
+		delete(steps[idx].(map[string]any), "computeResources")
+	}
+
 	bs, err := yaml.Marshal(o.Object)
 	if err != nil {
 		return "", fmt.Errorf("cannot marshal object to yaml: %v", err)
