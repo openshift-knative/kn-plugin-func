@@ -32,10 +32,13 @@ const (
 	// the usage depends whether we use direct code upload or Git reference for a standard (non PAC) on-cluster build
 	taskGitClonePACTaskRef = `- name: fetch-sources
       params:
-        - name: URL
+        - name: url
           value: $(params.gitRepository)
-        - name: REVISION
+        - name: revision
           value: $(params.gitRevision)
+      taskRef:
+        kind: Task
+        name: git-clone
       workspaces:
         - name: output
           workspace: source-workspace
@@ -134,15 +137,6 @@ func createPipelineTemplatePAC(f fn.Function, labels map[string]string) error {
 			return err
 		}
 		*val.field = ts
-	}
-
-	gct, err := getGitCloneTask()
-	if err != nil {
-		return fmt.Errorf("failed to get git task: %v", err)
-	}
-	data.GitCloneTaskSpec, err = getTaskSpec(gct)
-	if err != nil {
-		return fmt.Errorf("failed to get git task spec: %v", err)
 	}
 
 	var template string
