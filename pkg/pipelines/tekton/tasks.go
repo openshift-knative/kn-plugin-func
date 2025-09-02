@@ -476,8 +476,8 @@ func getGitCloneTask() (string, error) {
 	}
 	delete(o.Object["metadata"].(map[string]any), "managedFields")
 
-	spec := o.Object["spec"].(map[string]interface{})
-	wss := spec["workspaces"].([]interface{})
+	spec := o.Object["spec"].(map[string]any)
+	wss := spec["workspaces"].([]any)
 	type ws struct {
 		Name     string
 		Optional bool
