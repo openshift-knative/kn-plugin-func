@@ -474,25 +474,29 @@ func getGitCloneTask() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("cannot get git-clone task: %v", err)
 	}
-	delete(o.Object["metadata"].(map[string]any), "managedFields")
 
+	/* BEGIN fixup workspaces */
 	spec := o.Object["spec"].(map[string]any)
-	wss := spec["workspaces"].([]any)
+	workspaces := spec["workspaces"].([]any)
 	type ws struct {
 		Name     string
 		Optional bool
 	}
-	wss = append(wss, ws{Name: "dockerconfig", Optional: true})
-	wss = append(wss, ws{Name: "cache", Optional: true})
-	spec["workspaces"] = wss
+	spec["workspaces"] = append(workspaces,
+		ws{Name: "dockerconfig", Optional: true},
+		ws{Name: "cache", Optional: true},
+	)
+	/* END fixup workspaces */
 
+	/* BEGIN delete unnecessary fields */
+	delete(o.Object["metadata"].(map[string]any), "managedFields")
 	stepTemplate := spec["stepTemplate"].(map[string]any)
 	delete(stepTemplate, "computeResources")
-
 	steps := spec["steps"].([]any)
 	for idx := range steps {
 		delete(steps[idx].(map[string]any), "computeResources")
 	}
+	/* END delete unnecessary fields */
 
 	bs, err := yaml.Marshal(o.Object)
 	if err != nil {
