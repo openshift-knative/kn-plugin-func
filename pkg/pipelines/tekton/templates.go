@@ -32,9 +32,9 @@ const (
 	// the usage depends whether we use direct code upload or Git reference for a standard (non PAC) on-cluster build
 	taskGitClonePACTaskRef = `- name: fetch-sources
       params:
-        - name: url
+        - name: URL
           value: $(params.gitRepository)
-        - name: revision
+        - name: REVISION
           value: $(params.gitRevision)
       workspaces:
         - name: output
@@ -46,9 +46,9 @@ const (
 
 	taskGitCloneTaskRef = `- name: fetch-sources
       params:
-        - name: url
+        - name: URL
           value: $(params.gitRepository)
-        - name: revision
+        - name: REVISION
           value: $(params.gitRevision)
       workspaces:
         - name: output
