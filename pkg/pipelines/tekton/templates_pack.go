@@ -42,6 +42,7 @@ spec:
       type: array
   tasks:
     {{.GitCloneTaskRef}}
+      {{.GitCloneTaskSpec}}
     - name: scaffold
       params:
         - name: path

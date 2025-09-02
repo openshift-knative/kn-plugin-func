@@ -41,26 +41,26 @@ const (
         name: git-clone
       workspaces:
         - name: output
-          workspace: source-workspace`
-	// TODO fix Tekton Hub reference
+          workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace`
+
 	taskGitCloneTaskRef = `- name: fetch-sources
       params:
-        - name: url
+        - name: URL
           value: $(params.gitRepository)
-        - name: revision
+        - name: REVISION
           value: $(params.gitRevision)
-      taskRef:
-        resolver: hub
-        params:
-          - name: kind
-            value: task
-          - name: name
-            value: git-clone
-          - name: version
-            value: "0.4"
       workspaces:
         - name: output
-          workspace: source-workspace`
+          workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace`
+
 	runAfterFetchSourcesRef = `runAfter:
         - fetch-sources`
 
@@ -96,6 +96,7 @@ type templateData struct {
 
 	// Task references
 	GitCloneTaskRef       string
+	GitCloneTaskSpec      string
 	FuncBuildpacksTaskRef string
 	FuncS2iTaskRef        string
 	FuncDeployTaskRef     string
@@ -307,10 +308,20 @@ func createAndApplyPipelineTemplate(f fn.Function, namespace string, labels map[
 	// If Git is set up create fetch task and reference it from build task,
 	// otherwise sources have been already uploaded to workspace PVC.
 	gitCloneTaskRef := ""
+	gitCloneTaskSpec := ""
 	runAfterFetchSources := ""
 	if f.Build.Git.URL != "" {
 		runAfterFetchSources = runAfterFetchSourcesRef
 		gitCloneTaskRef = taskGitCloneTaskRef
+		gct, err := getGitCloneTask()
+		if err != nil {
+			return fmt.Errorf("error getting git clone task: %v", err)
+		}
+		ts, err := getTaskSpec(gct)
+		if err != nil {
+			return err
+		}
+		gitCloneTaskSpec = ts
 	}
 
 	data := templateData{
@@ -320,6 +331,7 @@ func createAndApplyPipelineTemplate(f fn.Function, namespace string, labels map[
 		PipelineName:         getPipelineName(f),
 		RunAfterFetchSources: runAfterFetchSources,
 		GitCloneTaskRef:      gitCloneTaskRef,
+		GitCloneTaskSpec:     gitCloneTaskSpec,
 	}
 
 	for _, val := range []struct {

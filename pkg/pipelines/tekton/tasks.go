@@ -1,8 +1,14 @@
 package tekton
 
 import (
+	"context"
 	"fmt"
 	"strings"
+
+	"gopkg.in/yaml.v3"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"knative.dev/func/pkg/k8s"
 )
 
 var DeployerImage = "ghcr.io/knative/func-utils:latest"
@@ -452,6 +458,51 @@ spec:
       script: |
         scaffold $(params.path)
 `, DeployerImage)
+}
+
+func getGitCloneTask() (string, error) {
+	c, err := k8s.NewDynamicClient()
+	if err != nil {
+		return "", fmt.Errorf("cannot create k8s client: %v", err)
+	}
+	taskGVR := schema.GroupVersionResource{
+		Group:    "tekton.dev",
+		Version:  "v1",
+		Resource: "tasks",
+	}
+	o, err := c.Resource(taskGVR).Namespace("openshift-pipelines").Get(context.Background(), "git-clone", metav1.GetOptions{})
+	if err != nil {
+		return "", fmt.Errorf("cannot get git-clone task: %v", err)
+	}
+
+	/* BEGIN fixup workspaces */
+	spec := o.Object["spec"].(map[string]any)
+	workspaces := spec["workspaces"].([]any)
+	type ws struct {
+		Name     string
+		Optional bool
+	}
+	spec["workspaces"] = append(workspaces,
+		ws{Name: "dockerconfig", Optional: true},
+		ws{Name: "cache", Optional: true},
+	)
+	/* END fixup workspaces */
+
+	/* BEGIN delete unnecessary fields */
+	delete(o.Object["metadata"].(map[string]any), "managedFields")
+	stepTemplate := spec["stepTemplate"].(map[string]any)
+	delete(stepTemplate, "computeResources")
+	steps := spec["steps"].([]any)
+	for idx := range steps {
+		delete(steps[idx].(map[string]any), "computeResources")
+	}
+	/* END delete unnecessary fields */
+
+	bs, err := yaml.Marshal(o.Object)
+	if err != nil {
+		return "", fmt.Errorf("cannot marshal object to yaml: %v", err)
+	}
+	return string(bs), nil
 }
 
 // GetClusterTasks returns multi-document yaml containing tekton tasks used by func.
