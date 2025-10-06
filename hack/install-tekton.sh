@@ -42,7 +42,7 @@ install_tekton() {
 }
 
 # Invoke only when run directly
-# Be a library when sourced
+# Be a library when sourced     
 if [ "$0" = "${BASH_SOURCE[0]}" ]; then
   set -o errexit
   set -o nounset
