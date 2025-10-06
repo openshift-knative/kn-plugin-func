@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-alpine_version='3.21.2'
+alpine_version='3.22.1'
 go_version='1.23.5'
 
 alpine_release_key='0482D84022F52DF1C4E7CD43293ACD0907D9495A'

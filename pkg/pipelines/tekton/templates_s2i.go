@@ -46,6 +46,7 @@ spec:
       default: 'image:///usr/libexec/s2i'
   tasks:
     {{.GitCloneTaskRef}}
+      {{.GitCloneTaskSpec}}
     - name: scaffold
       params:
         - name: path
@@ -53,6 +54,10 @@ spec:
       workspaces:
         - name: source
           workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace
       {{.RunAfterFetchSources}}
       {{.FuncScaffoldTaskRef}}
     - name: build
@@ -92,6 +97,10 @@ spec:
       workspaces:
         - name: source
           workspace: source-workspace
+        - name: cache
+          workspace: cache-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace
   workspaces:
     - description: Directory where function source is located.
       name: source-workspace
@@ -120,11 +129,11 @@ metadata:
 spec:
   params:
     - name: gitRepository
-      value: {{.RepoUrl}}
+      value: "{{.RepoUrl}}"
     - name: gitRevision
       value: {{.Revision}}
     - name: contextDir
-      value: {{.ContextDir}}
+      value: "{{.ContextDir}}"
     - name: imageName
       value: {{.FunctionImage}}
     - name: registry
@@ -192,7 +201,7 @@ spec:
     - name: gitRevision
       value: {{.Revision}}
     - name: contextDir
-      value: {{.ContextDir}}
+      value: "{{.ContextDir}}"
     - name: imageName
       value: {{.FunctionImage}}
     - name: registry
