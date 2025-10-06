@@ -21,7 +21,7 @@ source "$(dirname "$(realpath "$0")")/common.sh"
 install_tekton() {
   echo "${blue}Installing Tekton${reset}"
 
-  tekton_release="previous/v0.56.4"
+  tekton_release="previous/v1.1.0"
   namespace="${NAMESPACE:-default}"
 
   $KUBECTL apply -f "https://storage.googleapis.com/tekton-releases/pipeline/${tekton_release}/release.yaml"
@@ -32,6 +32,11 @@ install_tekton() {
   sleep 10
 
   $KUBECTL create clusterrolebinding "${namespace}:knative-serving-namespaced-admin" --clusterrole=knative-serving-namespaced-admin --serviceaccount="${namespace}:default"
+
+  echo "${blue}- Disabling affinity assistant (temporary workaround)${reset}"
+  $KUBECTL patch configmap feature-flags -n tekton-pipelines \
+    -p '{"data":{"disable-affinity-assistant":"true", "coschedule":"disabled"}}' \
+    --type=merge
 
   echo "${green}✅ Tekton${reset}"
 }
