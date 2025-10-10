@@ -1,6 +1,6 @@
 # DO NOT EDIT! Generated Dockerfile for cmd/func-util.
 ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-8-release-golang-1.23-openshift-4.19
-ARG GO_RUNTIME=registry.access.redhat.com/ubi8/ubi-minimal
+ARG GO_RUNTIME=registry.access.redhat.com/ubi9/ubi-minimal
 
 FROM $GO_BUILDER as builder
 
@@ -17,7 +17,7 @@ FROM $GO_RUNTIME
 
 ARG VERSION=knative-v1.17
 
-RUN microdnf install socat tar
+RUN microdnf install -y socat tar
 
 COPY --from=builder /usr/bin/main /usr/bin/func-util
 COPY LICENSE /licenses/
@@ -30,14 +30,15 @@ RUN ln -s /usr/bin/func-util /usr/local/bin/deploy && \
 USER 65532
 
 LABEL \
-      com.redhat.component="openshift-serverless-1-kn-plugin-func-func-util-rhel8-container" \
-      name="openshift-serverless-1/kn-plugin-func-func-util-rhel8" \
+      com.redhat.component="openshift-serverless-1-kn-plugin-func-func-util-rhel9-container" \
+      name="openshift-serverless-1/kn-plugin-func-func-util-rhel9" \
       version=$VERSION \
       summary="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       maintainer="serverless-support@redhat.com" \
       description="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.description="Red Hat OpenShift Serverless Kn Plugin Func Func Util" \
-      io.openshift.tags="func-util"
+      io.openshift.tags="func-util" \
+      cpe="cpe:/a:redhat:openshift_serverless:1.37::el9"
 
 ENTRYPOINT ["/usr/bin/bash"]
