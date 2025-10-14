@@ -136,7 +136,7 @@ func runConfigCmd(cmd *cobra.Command, args []string) (err error) {
 		} else if answers.SelectedConfig == "Environment variables" {
 			err = listEnvs(function, cmd.OutOrStdout(), Human)
 		} else if answers.SelectedConfig == "Labels" {
-			listLabels(function)
+			err = listLabels(function, cmd.OutOrStdout(), Human)
 		} else if answers.SelectedConfig == "Git" {
 			err = runConfigGitCmd(cmd, NewClient)
 		}
