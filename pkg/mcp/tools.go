@@ -33,7 +33,7 @@ func handleCreateTool(
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 
-	args := []string{"create", "-l", language}
+	args := []string{"func", "create", "-l", language}
 
 	// Optional flags
 	if v := request.GetString("template", ""); v != "" {
@@ -52,7 +52,7 @@ func handleCreateTool(
 	// `name` is passed as a positional argument (directory to create in)
 	args = append(args, name)
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	cmd.Dir = cwd
 
 	out, err := cmd.CombinedOutput()
@@ -81,7 +81,7 @@ func handleDeployTool(
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 
-	args := []string{"deploy", "--builder", builder, "--registry", registry}
+	args := []string{"func", "deploy", "--builder", builder, "--registry", registry}
 
 	// Optional flags
 	if v := request.GetString("image", ""); v != "" {
@@ -143,7 +143,7 @@ func handleDeployTool(
 		args = append(args, "--remote")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	cmd.Dir = cwd
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -157,7 +157,7 @@ func handleListTool(
 	ctx context.Context,
 	request mcp.CallToolRequest,
 ) (*mcp.CallToolResult, error) {
-	args := []string{"list"}
+	args := []string{"func", "list"}
 
 	// Optional flags
 	if request.GetBool("all-namespaces", false) {
@@ -173,7 +173,7 @@ func handleListTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func list failed: %s", out)), nil
@@ -199,7 +199,7 @@ func handleBuildTool(
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 
-	args := []string{"build", "--builder", builder, "--registry", registry}
+	args := []string{"func", "build", "--builder", builder, "--registry", registry}
 
 	// Optional flags
 	if v := request.GetString("builder-image", ""); v != "" {
@@ -231,7 +231,7 @@ func handleBuildTool(
 		args = append(args, "--build-timestamp")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	cmd.Dir = cwd
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -250,7 +250,7 @@ func handleDeleteTool(
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 
-	args := []string{"delete", name}
+	args := []string{"func", "delete", name}
 
 	// Optional flags
 	if v := request.GetString("namespace", ""); v != "" {
@@ -270,7 +270,7 @@ func handleDeleteTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func delete failed: %s", out)), nil
@@ -293,12 +293,12 @@ func handleConfigVolumesTool(
 		return mcp.NewToolResultError(err.Error()), nil
 	}
 	if action == "list" {
-		args := []string{"config", "volumes", "--path", path}
+		args := []string{"func", "config", "volumes", "--path", path}
 		if request.GetBool("verbose", false) {
 			args = append(args, "--verbose")
 		}
 
-		cmd := exec.Command("func", args...)
+		cmd := exec.Command("kn", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config volumes list failed: %s", out)), nil
@@ -307,7 +307,7 @@ func handleConfigVolumesTool(
 		return mcp.NewToolResultText(string(body)), nil
 	}
 
-	args := []string{"config", "volumes", action}
+	args := []string{"func", "config", "volumes", action}
 
 	if action == "add" {
 		volumeType, err := request.RequireString("type")
@@ -339,7 +339,7 @@ func handleConfigVolumesTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config volumes failed: %s", out)), nil
@@ -363,12 +363,12 @@ func handleConfigLabelsTool(
 	}
 
 	if action == "list" {
-		args := []string{"config", "labels", "--path", path}
+		args := []string{"func", "config", "labels", "--path", path}
 		if request.GetBool("verbose", false) {
 			args = append(args, "--verbose")
 		}
 
-		cmd := exec.Command("func", args...)
+		cmd := exec.Command("kn", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config labels list failed: %s", out)), nil
@@ -377,7 +377,7 @@ func handleConfigLabelsTool(
 		return mcp.NewToolResultText(string(body)), nil
 	}
 
-	args := []string{"config", "labels", action, "--path", path}
+	args := []string{"func", "config", "labels", action, "--path", path}
 
 	// Optional flags
 	if name := request.GetString("name", ""); name != "" {
@@ -390,7 +390,7 @@ func handleConfigLabelsTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config labels %s failed: %s", action, out)), nil
@@ -415,12 +415,12 @@ func handleConfigEnvsTool(
 
 	// Handle 'list' action separately
 	if action == "list" {
-		args := []string{"config", "envs", "--path", path}
+		args := []string{"func", "config", "envs", "--path", path}
 		if request.GetBool("verbose", false) {
 			args = append(args, "--verbose")
 		}
 
-		cmd := exec.Command("func", args...)
+		cmd := exec.Command("kn", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config envs list failed: %s", out)), nil
@@ -430,7 +430,7 @@ func handleConfigEnvsTool(
 	}
 
 	// Handle 'add' and 'remove' actions
-	args := []string{"config", "envs", action, "--path", path}
+	args := []string{"func", "config", "envs", action, "--path", path}
 
 	// Optional flags
 	if name := request.GetString("name", ""); name != "" {
@@ -443,7 +443,7 @@ func handleConfigEnvsTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := exec.Command("func", args...)
+	cmd := exec.Command("kn", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config envs %s failed: %s", action, out)), nil
