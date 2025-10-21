@@ -2,7 +2,6 @@ package oci
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
@@ -32,15 +31,21 @@ type Pusher struct {
 
 	updates chan v1.Update
 	done    chan bool
+
+	transport http.RoundTripper
 }
 
-func NewPusher(insecure, anon, verbose bool) *Pusher {
+func NewPusher(insecure, anon, verbose bool, t http.RoundTripper) *Pusher {
+	if t == nil {
+		t = remote.DefaultTransport
+	}
 	return &Pusher{
 		Insecure:  insecure,
 		Anonymous: anon,
 		Verbose:   verbose,
 		updates:   make(chan v1.Update, 10),
 		done:      make(chan bool, 1),
+		transport: t,
 	}
 }
 
@@ -124,14 +129,7 @@ func (p *Pusher) writeIndex(ctx context.Context, ref name.Reference, ii v1.Image
 	oo := []remote.Option{
 		remote.WithContext(ctx),
 		remote.WithProgress(p.updates),
-	}
-
-	if p.Insecure {
-		t := remote.DefaultTransport.(*http.Transport).Clone()
-		t.TLSClientConfig = &tls.Config{
-			InsecureSkipVerify: true,
-		}
-		oo = append(oo, remote.WithTransport(t))
+		remote.WithTransport(p.transport),
 	}
 
 	if !p.Anonymous {

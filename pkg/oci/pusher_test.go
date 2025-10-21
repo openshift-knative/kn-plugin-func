@@ -62,7 +62,7 @@ func TestPusher_Push(t *testing.T) {
 	// Create and push a function
 	client := fn.New(
 		fn.WithBuilder(NewBuilder("", false)),
-		fn.WithPusher(NewPusher(insecure, anon, verbose)))
+		fn.WithPusher(NewPusher(insecure, anon, verbose, nil)))
 
 	f := fn.Function{Root: root, Runtime: "go", Name: "f", Registry: l.Addr().String() + "/funcs"}
 
@@ -127,7 +127,7 @@ func TestPusher_BasicAuth(t *testing.T) {
 	// initialized with an OCI builder and pusher.
 	client := fn.New(
 		fn.WithBuilder(NewBuilder("", verbose)),
-		fn.WithPusher(NewPusher(false, false, verbose)))
+		fn.WithPusher(NewPusher(false, false, verbose, nil)))
 
 	// Function
 	// Built and tagged to push to the mock registry
