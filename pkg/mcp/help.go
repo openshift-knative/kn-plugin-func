@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os/exec"
 	"strings"
 
 	"github.com/mark3labs/mcp-go/mcp"
@@ -72,7 +71,7 @@ func parseGitHubURL(url string) (owner, repo string) {
 }
 
 func handleRootHelpResource(ctx context.Context, request mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-	content, err := exec.Command("func", "--help").Output()
+	content, err := funcCmd("--help").Output()
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +87,7 @@ func handleRootHelpResource(ctx context.Context, request mcp.ReadResourceRequest
 
 func runHelpCommand(args []string, uri string) ([]mcp.ResourceContents, error) {
 	args = append(args, "--help")
-	content, err := exec.Command("func", args...).Output()
+	content, err := funcCmd(args...).Output()
 	if err != nil {
 		return nil, err
 	}
