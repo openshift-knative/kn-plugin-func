@@ -39,6 +39,8 @@ LABEL \
       io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.description="Red Hat OpenShift Serverless Kn Plugin Func Func Util" \
       io.openshift.tags="func-util" \
+      vendor="Red Hat, Inc." \
+      release=$VERSION \
       cpe="cpe:/a:redhat:openshift_serverless:1.37::el9"
 
 ENTRYPOINT ["/usr/bin/bash"]
