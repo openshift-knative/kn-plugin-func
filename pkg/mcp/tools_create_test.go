@@ -67,7 +67,7 @@ func TestTool_Create_Args(t *testing.T) {
 	inputArgs["language"] = language
 
 	// Invoke tool with all arguments
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "create",
 		Arguments: inputArgs,
 	})
@@ -99,7 +99,7 @@ func TestTool_Create_BinaryFailure(t *testing.T) {
 	}
 
 	// Invoke, expecting an error
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name: "create",
 		Arguments: map[string]any{
 			"language": "go",

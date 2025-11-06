@@ -47,7 +47,7 @@ func TestTool_List_Args(t *testing.T) {
 	inputArgs := buildInputArgs(stringFlags, boolFlags)
 
 	// Invoke tool with all optional arguments
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "list",
 		Arguments: inputArgs,
 	})

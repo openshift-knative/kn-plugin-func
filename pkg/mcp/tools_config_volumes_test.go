@@ -70,7 +70,7 @@ func TestTool_ConfigVolumes_Add(t *testing.T) {
 	inputArgs["action"] = action
 
 	// Invoke tool with all arguments
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "config_volumes",
 		Arguments: inputArgs,
 	})
@@ -117,7 +117,7 @@ func TestTool_ConfigVolumes_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name: "config_volumes",
 		Arguments: map[string]any{
 			"action": action,

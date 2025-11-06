@@ -66,7 +66,7 @@ func TestTool_ConfigLabels_Add(t *testing.T) {
 	inputArgs["action"] = action
 
 	// Invoke tool with all arguments
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "config_labels",
 		Arguments: inputArgs,
 	})
@@ -113,7 +113,7 @@ func TestTool_ConfigLabels_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name: "config_labels",
 		Arguments: map[string]any{
 			"action": action,

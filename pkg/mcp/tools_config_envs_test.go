@@ -64,7 +64,7 @@ func TestTool_ConfigEnvs_Add(t *testing.T) {
 	inputArgs["action"] = action
 
 	// Invoke tool with all arguments
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "config_envs",
 		Arguments: inputArgs,
 	})
@@ -111,7 +111,7 @@ func TestTool_ConfigEnvs_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name: "config_envs",
 		Arguments: map[string]any{
 			"action": action,

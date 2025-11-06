@@ -1,6 +1,7 @@
 package mcp
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"testing"
@@ -16,7 +17,7 @@ func TestTool_Healthcheck(t *testing.T) {
 	}
 
 	// Invoke the healthcheck tool
-	result, err := client.CallTool(t.Context(), &mcp.CallToolParams{
+	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
 		Name:      "healthcheck",
 		Arguments: map[string]any{},
 	})

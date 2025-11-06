@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -76,9 +77,12 @@ func newTestPairWithReadonly(t *testing.T, readonly bool) (*mcp.ClientSession, *
 		close(initCh)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
 	// Start the Server (readonly already set via WithReadonly option)
 	go func() {
-		errCh <- server.Start(t.Context(), !readonly)
+		errCh <- server.Start(ctx, !readonly)
 	}()
 
 	// Connect a client to trigger initialization
@@ -86,7 +90,7 @@ func newTestPairWithReadonly(t *testing.T, readonly bool) (*mcp.ClientSession, *
 		Name:    "test-client",
 		Version: "1.0.0",
 	}, nil)
-	session, err := client.Connect(t.Context(), clientTpt, nil)
+	session, err := client.Connect(ctx, clientTpt, nil)
 	if err != nil {
 		return nil, nil, fmt.Errorf("client connection failed: %v", err)
 	}
@@ -95,7 +99,7 @@ func newTestPairWithReadonly(t *testing.T, readonly bool) (*mcp.ClientSession, *
 	select {
 	case err = <-errCh:
 		return nil, nil, fmt.Errorf("server exited prematurely %v", err)
-	case <-t.Context().Done():
+	case <-ctx.Done():
 		return nil, nil, fmt.Errorf("timeout waiting for server initialization")
 	case <-initCh: // Successful start; continue.
 	}
@@ -123,9 +127,12 @@ func newTestPair(t *testing.T, options ...Option) (session *mcp.ClientSession, s
 		close(initCh)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	t.Cleanup(cancel)
+
 	// Start the Server
 	go func() {
-		errCh <- server.Start(t.Context(), false)
+		errCh <- server.Start(ctx, false)
 	}()
 
 	// Connect a client to trigger initialization
@@ -133,7 +140,7 @@ func newTestPair(t *testing.T, options ...Option) (session *mcp.ClientSession, s
 		Name:    "test-client",
 		Version: "1.0.0",
 	}, nil)
-	session, err = client.Connect(t.Context(), clientTpt, nil)
+	session, err = client.Connect(ctx, clientTpt, nil)
 	if err != nil {
 		err = fmt.Errorf("client connection failed: %v", err)
 		return
@@ -143,7 +150,7 @@ func newTestPair(t *testing.T, options ...Option) (session *mcp.ClientSession, s
 	select {
 	case err = <-errCh:
 		err = fmt.Errorf("server exited prematurely %v", err)
-	case <-t.Context().Done():
+	case <-ctx.Done():
 		err = fmt.Errorf("timeout waiting for server initialization")
 	case <-initCh: // Successful start; continue.
 	}
