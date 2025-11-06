@@ -12,6 +12,8 @@
 
 /e2e/testdata/default_home/go
 /e2e/testdata/default_home/.cache
+/pkg/oci/testdata/test-links/absoluteLink
+/pkg/oci/testdata/test-links/absoluteLinkWindows
 
 /pkg/functions/testdata/migrations/*/.gitignore
 
