@@ -19,7 +19,6 @@ func TestTool_Create_Args(t *testing.T) {
 		flag    string
 		value   string
 	}{
-		"path":       {"path", "--path", "."},
 		"template":   {"template", "--template", "cloudevents"},
 		"repository": {"repository", "--repository", "https://example.com/repo"},
 	}
@@ -30,6 +29,7 @@ func TestTool_Create_Args(t *testing.T) {
 
 	// Required fields
 	language := "go"
+	path := "."
 
 	executor := mock.NewExecutor()
 	executor.ExecuteFn = func(ctx context.Context, subcommand string, args ...string) ([]byte, error) {
@@ -37,8 +37,8 @@ func TestTool_Create_Args(t *testing.T) {
 			t.Fatalf("expected subcommand 'create', got %q", subcommand)
 		}
 
-		// Expected: 1 required string flag (-l) + stringFlags + boolFlags
-		if len(args) != (1+len(stringFlags))*2+len(boolFlags) {
+		// Expected: 1 required string flag (-l) + stringFlags + boolFlags + 1 (positional path arg)
+		if len(args) != (1+len(stringFlags))*2+len(boolFlags)+1 {
 			t.Fatalf("expected %d args, got %d: %v", (1+len(stringFlags))*2+len(boolFlags), len(args), args)
 		}
 
@@ -65,6 +65,7 @@ func TestTool_Create_Args(t *testing.T) {
 	// Build input arguments from test data
 	inputArgs := buildInputArgs(stringFlags, boolFlags)
 	inputArgs["language"] = language
+	inputArgs["path"] = path
 
 	// Invoke tool with all arguments
 	result, err := client.CallTool(context.Background(), &mcp.CallToolParams{
