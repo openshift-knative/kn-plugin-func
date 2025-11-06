@@ -52,7 +52,7 @@ func handleCreateTool(
 	// `name` is passed as a positional argument (directory to create in)
 	args = append(args, name)
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	cmd.Dir = cwd
 
 	out, err := cmd.CombinedOutput()
@@ -143,7 +143,7 @@ func handleDeployTool(
 		args = append(args, "--remote")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	cmd.Dir = cwd
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -173,7 +173,7 @@ func handleListTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func list failed: %s", out)), nil
@@ -231,7 +231,7 @@ func handleBuildTool(
 		args = append(args, "--build-timestamp")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	cmd.Dir = cwd
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -270,7 +270,7 @@ func handleDeleteTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func delete failed: %s", out)), nil
@@ -298,7 +298,7 @@ func handleConfigVolumesTool(
 			args = append(args, "--verbose")
 		}
 
-		cmd := funcCmd(args...)
+		cmd := exec.Command("func", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config volumes list failed: %s", out)), nil
@@ -339,7 +339,7 @@ func handleConfigVolumesTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config volumes failed: %s", out)), nil
@@ -368,7 +368,7 @@ func handleConfigLabelsTool(
 			args = append(args, "--verbose")
 		}
 
-		cmd := funcCmd(args...)
+		cmd := exec.Command("func", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config labels list failed: %s", out)), nil
@@ -390,7 +390,7 @@ func handleConfigLabelsTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config labels %s failed: %s", action, out)), nil
@@ -420,7 +420,7 @@ func handleConfigEnvsTool(
 			args = append(args, "--verbose")
 		}
 
-		cmd := funcCmd(args...)
+		cmd := exec.Command("func", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			return mcp.NewToolResultError(fmt.Sprintf("func config envs list failed: %s", out)), nil
@@ -443,7 +443,7 @@ func handleConfigEnvsTool(
 		args = append(args, "--verbose")
 	}
 
-	cmd := funcCmd(args...)
+	cmd := exec.Command("func", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("func config envs %s failed: %s", action, out)), nil
@@ -451,11 +451,4 @@ func handleConfigEnvsTool(
 
 	body := []byte(fmt.Sprintf(`{"result": "%s"}`, out))
 	return mcp.NewToolResultText(string(body)), nil
-}
-
-func funcCmd(arg ...string) *exec.Cmd {
-	a := make([]string, 1, len(arg)+1)
-	a[0] = "func"
-	a = append(a, arg...)
-	return exec.Command("kn", a...)
 }
