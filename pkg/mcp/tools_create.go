@@ -42,7 +42,7 @@ type CreateInput struct {
 }
 
 func (i CreateInput) Args() []string {
-	args := []string{"-l", i.Language, "--path", i.Path}
+	args := []string{"-l", i.Language, i.Path}
 
 	// Optional
 	args = appendStringFlag(args, "--template", i.Template)
