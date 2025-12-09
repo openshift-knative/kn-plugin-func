@@ -3,7 +3,6 @@
 # Prepare Cluster on Openshift CI
 # - Creates testing Namespace
 # - Setup Openshift Serverless and Openshift Pipelines
-# - Creates Test GitServer service
 
 set -o errexit
 set -o nounset
@@ -12,8 +11,6 @@ set -o pipefail
 BASEDIR=$(dirname "$0")
 INSTALL_SERVERLESS="${INSTALL_SERVERLESS:-true}"
 INSTALL_PIPELINES="${INSTALL_PIPELINES:-true}"
-INSTALL_GITSERVER="${INSTALL_GITSERVER:-true}"
-GITSERVER_IMAGE="${GITSERVER_IMAGE:-ghcr.io/jrangelramos/gitserver-unpriv:latest}"
 
 go env
 source "$(go run knative.dev/hack/cmd/script e2e-tests.sh)"
@@ -43,13 +40,9 @@ if [ "$INSTALL_PIPELINES" == "true" ] ; then
   wait_until_pods_running openshift-pipelines
 fi
 
-# Installs Test Git Server
-if [ "$INSTALL_GITSERVER" == "true" ] ; then
-  header "Installing Test GitServer"
-  sed "s!_GITSERVER_IMAGE_!${GITSERVER_IMAGE}!g" "${BASEDIR}/deploy/gitserver-service.yaml" > "${BASEDIR}/deploy/gitserver.yaml"
-  oc apply -f "${BASEDIR}/deploy/gitserver.yaml"
-  oc wait pod/gitserver --for=condition=Ready --timeout=15s
+ # TEMPORARY WORKAROUND: Disable affinity assistant to prevent pod scheduling issues
+subheader "Disabling affinity assistant (temporary workaround)"
+oc patch configmap feature-flags -n openshift-pipelines \
+  -p '{"data":{"disable-affinity-assistant":"true", "coschedule":"disabled"}}' \
+  --type=merge
 
-  subheader "Exposing Test GitServer route"
-  oc expose service gitserver --name=gitserver --port=8080
-fi
