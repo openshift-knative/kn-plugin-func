@@ -17,7 +17,7 @@ FROM $GO_RUNTIME
 
 ARG VERSION=knative-v1.16
 
-RUN microdnf install socat tar
+RUN microdnf install -y socat tar
 
 COPY --from=builder /usr/bin/main /usr/bin/func-util
 COPY LICENSE /licenses/
@@ -38,6 +38,10 @@ LABEL \
       description="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.display-name="Red Hat OpenShift Serverless 1 Kn Plugin Func Func Util" \
       io.k8s.description="Red Hat OpenShift Serverless Kn Plugin Func Func Util" \
-      io.openshift.tags="func-util"
+      io.openshift.tags="func-util" \
+      vendor="Red Hat, Inc." \
+      release=$VERSION \
+      cpe="cpe:/a:redhat:openshift_serverless:1.36::el8"
+
 
 ENTRYPOINT ["/usr/bin/bash"]
