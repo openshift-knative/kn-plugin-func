@@ -53,18 +53,12 @@ spec:
       type: string
       default: ''
   tasks:
-    {{.GitCloneTaskRef}}
-    - name: scaffold
-      params:
-        - name: path
-          value: $(workspaces.source.path)/$(params.contextDir)
-      workspaces:
-        - name: source
-          workspace: source-workspace
-      {{.RunAfterFetchSources}}
-      {{.FuncScaffoldTaskRef}}
     - name: build
       params:
+        - name: GIT_REPOSITORY
+          value: $(params.gitRepository)
+        - name: GIT_REVISION
+          value: $(params.gitRevision)
         - name: IMAGE
           value: $(params.imageName)
         - name: REGISTRY
@@ -80,10 +74,6 @@ spec:
           value: $(params.s2iImageScriptsUrl)
         - name: TLSVERIFY
           value: $(params.tlsVerify)
-        - name: MIDDLEWARE_VERSION
-          value: $(tasks.scaffold.results.middlewareVersion)
-      runAfter:
-        - scaffold
       {{.FuncS2iTaskRef}}
       workspaces:
         - name: source
@@ -92,18 +82,6 @@ spec:
           workspace: cache-workspace
         - name: dockerconfig
           workspace: dockerconfig-workspace
-    - name: deploy
-      params:
-        - name: path
-          value: $(workspaces.source.path)/$(params.contextDir)
-        - name: image
-          value: $(params.imageName)@$(tasks.build.results.IMAGE_DIGEST)
-      runAfter:
-        - build
-      {{.FuncDeployTaskRef}}
-      workspaces:
-        - name: source
-          workspace: source-workspace
   workspaces:
     - description: Directory where function source is located.
       name: source-workspace
