@@ -40,8 +40,8 @@ jobs:
         run: ./hack/setup-testing-images.sh
       - name: Install RH pull secrets for KinD cluster
         env:
-          RH_REG_USR: ${{ secrets.RH_REG_USR }}
-          RH_REG_PWD: ${{ secrets.RH_REG_PWD }}
+          RH_REG_USR: ${{ secrets.REGISTRY_REDHAT_IO_USERNAME }}
+          RH_REG_PWD: ${{ secrets.REGISTRY_REDHAT_IO_PASSWORD }}
         run: ./hack/install-pull-secrets.sh
       - name: Integration Test Podman
         env:
