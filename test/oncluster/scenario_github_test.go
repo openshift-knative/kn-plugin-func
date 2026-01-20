@@ -36,10 +36,10 @@ Notes:
 func resolveGitVars() (gitRepoUrl string, gitRef string) {
 	// On a GitHub Action (Pull Request) these variables will be set
 	// https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-	gitRepo := common.GetOsEnvOrDefault("GITHUB_REPOSITORY", "knative/func")
+	gitRepo := common.GetOsEnvOrDefault("GITHUB_REPOSITORY", "openshift-knative/kn-plugin-func")
 	gitRepoUrl = "https://github.com/" + gitRepo + ".git"
 
-	gitRef = common.GetOsEnvOrDefault("GITHUB_REF", "main")
+	gitRef = common.GetOsEnvOrDefault("GITHUB_REF", "release-v1.17")
 	// GitHub uses 2 refs per merge request (refs/pull/ID/head and refs/pull/ID/merge), ensure using */head
 	exp := regexp.MustCompile("^refs/pull/(.*?)/merge$")
 	gitRef = exp.ReplaceAllString(gitRef, "refs/pull/${1}/head")
