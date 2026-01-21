@@ -29,24 +29,6 @@ const (
 	taskGitCloneRef = "git-clone"
 
 	// Following part holds a reference to Git Clone Task to be used in Pipeline template,
-	// the usage depends whether we use direct code upload or Git reference for a standard (non PAC) on-cluster build
-	taskGitClonePACTaskRef = `- name: fetch-sources
-      params:
-        - name: url
-          value: $(params.gitRepository)
-        - name: revision
-          value: $(params.gitRevision)
-      taskRef:
-        kind: Task
-        name: git-clone
-      workspaces:
-        - name: output
-          workspace: source-workspace
-        - name: cache
-          workspace: cache-workspace
-        - name: dockerconfig
-          workspace: dockerconfig-workspace`
-
 	taskGitCloneTaskRef = `- name: fetch-sources
       params:
         - name: URL
@@ -114,13 +96,22 @@ type templateData struct {
 // createPipelineTemplatePAC creates a Pipeline template used for PAC on-cluster build
 // it creates the resource in the project directory
 func createPipelineTemplatePAC(f fn.Function, labels map[string]string) error {
+	gct, err := getGitCloneTask()
+	if err != nil {
+		return fmt.Errorf("error getting git clone task: %v", err)
+	}
+	gts, err := getTaskSpec(gct)
+	if err != nil {
+		return err
+	}
 	data := templateData{
 		FunctionName:         f.Name,
 		Annotations:          f.Deploy.Annotations,
 		Labels:               labels,
 		PipelineName:         getPipelineName(f),
 		RunAfterFetchSources: runAfterFetchSourcesRef,
-		GitCloneTaskRef:      taskGitClonePACTaskRef,
+		GitCloneTaskRef:      taskGitCloneTaskRef,
+		GitCloneTaskSpec:     gts,
 	}
 
 	for _, val := range []struct {
