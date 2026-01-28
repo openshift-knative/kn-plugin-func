@@ -38,6 +38,13 @@ jobs:
         run: ./hack/registry.sh
       - name: Setup testing images
         run: ./hack/setup-testing-images.sh
+      - name: Install RH pull secrets for KinD cluster
+        env:
+          RH_REG_USR: ${{ secrets.REGISTRY_REDHAT_IO_USERNAME }}
+          RH_REG_PWD: ${{ secrets.REGISTRY_REDHAT_IO_PASSWORD }}
+        run: ./hack/install-pull-secrets.sh
+      - name: Install Tekton
+        run: ./hack/install-tekton.sh
       - name: Integration Test Podman
         env:
           FUNC_REPO_REF: ${{ github.event.pull_request.head.repo.full_name }}
