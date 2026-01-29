@@ -41,6 +41,11 @@ install_tekton() {
   echo "${green}✅ Tekton${reset}"
 }
 
+install_ocp_git_clone_task() {
+  echo "Installing Openshift Pipelines specific task"
+  kubectl apply -f "$(dirname "$(realpath "$0")")/git-clone.yaml"
+}
+
 # Invoke only when run directly
 # Be a library when sourced     
 if [ "$0" = "${BASH_SOURCE[0]}" ]; then
@@ -50,6 +55,7 @@ if [ "$0" = "${BASH_SOURCE[0]}" ]; then
 
   function main() {
     install_tekton
+    install_ocp_git_clone_task
   }
   main "$@"
 fi

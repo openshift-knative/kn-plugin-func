@@ -25,7 +25,7 @@ require (
 	github.com/docker/go-connections v0.5.0
 	github.com/go-git/go-billy/v5 v5.6.2
 	github.com/go-git/go-git/v5 v5.13.2
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.20.2
 	github.com/google/go-github/v49 v49.1.0
 	github.com/google/uuid v1.6.0
@@ -34,8 +34,8 @@ require (
 	github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02
 	github.com/manifestival/client-go-client v0.5.0
 	github.com/manifestival/manifestival v0.7.2
-	github.com/mark3labs/mcp-go v0.30.0
-	github.com/opencontainers/image-spec v1.1.0
+	github.com/modelcontextprotocol/go-sdk v1.1.0
+	github.com/opencontainers/image-spec v1.1.1
 	github.com/openshift-pipelines/pipelines-as-code v0.31.0
 	github.com/openshift/source-to-image v1.5.0
 	github.com/ory/viper v1.7.5
@@ -51,7 +51,7 @@ require (
 	github.com/xanzy/go-gitlab v0.102.0
 	golang.org/x/crypto v0.32.0
 	golang.org/x/net v0.34.0
-	golang.org/x/oauth2 v0.25.0
+	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.11.0
 	golang.org/x/term v0.28.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -164,6 +164,7 @@ require (
 	github.com/google/go-intervals v0.0.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/google/jsonschema-go v0.3.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
