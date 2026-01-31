@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/rand"
 	"k8s.io/apimachinery/pkg/util/wait"
 	eventingv1 "knative.dev/eventing/pkg/apis/eventing/v1"
+	"knative.dev/func/pkg/keda"
 	"knative.dev/func/pkg/knative"
 	"knative.dev/func/pkg/oci"
 	. "knative.dev/func/pkg/testing"
@@ -1141,7 +1142,7 @@ func getHttpClient(ctx context.Context, deployer string) (*http.Client, func(), 
 	noopDeferFunc := func() {}
 
 	switch deployer {
-	case k8s.KubernetesDeployerName:
+	case k8s.KubernetesDeployerName, keda.KedaDeployerName:
 		// For Kubernetes deployments, use in-cluster dialer to access ClusterIP services
 
 		clientConfig := k8s.GetClientConfig()
