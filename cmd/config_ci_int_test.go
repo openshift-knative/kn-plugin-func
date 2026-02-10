@@ -2,9 +2,10 @@ package cmd_test
 
 import (
 	"errors"
-	"io"
 	"os"
 	"path/filepath"
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/ory/viper"
@@ -77,14 +78,52 @@ func TestNewConfigCICmd_WritesWorkflowFileToFSWithCorrectYAMLStructure(t *testin
 	opts := defaultIntegrationOpts(t, nil)
 
 	err := runConfigCiCmdIntegration(t, opts)
-	file, openErr := os.Open(filepath.Join(opts.withFunc.Root, ci.DefaultGitHubWorkflowDir, ci.DefaultGitHubWorkflowFilename))
-	raw, readErr := io.ReadAll(file)
+	raw := readWorkflowFile(t, opts.withFunc.Root)
 
 	assert.NilError(t, err)
-	assert.NilError(t, openErr)
-	assert.NilError(t, readErr)
-	assertDefaultWorkflowWithBranch(t, string(raw), mainBranch)
-	file.Close()
+	assertDefaultWorkflowWithBranch(t, raw, mainBranch)
+}
+
+func TestNewConfigCICmd_ForceFlagOverwritesExistingWorkflowOnFS(t *testing.T) {
+	workflowName := "Func Deploy"
+	changedWorkflowName := "Sales Service Deployment"
+	baseOpts := defaultIntegrationOpts(t, nil)
+
+	t.Run("initial workflow creation succeeds", func(t *testing.T) {
+		err := runConfigCiCmdIntegration(t, baseOpts)
+		content := readWorkflowFile(t, baseOpts.withFunc.Root)
+
+		assert.NilError(t, err)
+		assert.Assert(t, yamlContains(content, workflowName))
+	})
+
+	t.Run("overwrite without force flag fails", func(t *testing.T) {
+		opts := optsIntegration{
+			withFunc: baseOpts.withFunc,
+			args:     append(slices.Clone(baseOpts.args), "--workflow-name="+changedWorkflowName),
+		}
+
+		err := runConfigCiCmdIntegration(t, opts)
+		content := readWorkflowFile(t, opts.withFunc.Root)
+
+		assert.ErrorIs(t, err, ci.ErrWorkflowExists)
+		assert.Assert(t, yamlContains(content, workflowName))
+		assert.Assert(t, !strings.Contains(content, changedWorkflowName))
+	})
+
+	t.Run("overwrite with force flag succeeds", func(t *testing.T) {
+		opts := optsIntegration{
+			withFunc: baseOpts.withFunc,
+			args:     append(slices.Clone(baseOpts.args), "--workflow-name="+changedWorkflowName, "--force"),
+		}
+
+		err := runConfigCiCmdIntegration(t, opts)
+		content := readWorkflowFile(t, opts.withFunc.Root)
+
+		assert.NilError(t, err)
+		assert.Assert(t, yamlContains(content, changedWorkflowName))
+		assert.Assert(t, !strings.Contains(content, workflowName))
+	})
 }
 
 // ----------------------
@@ -146,6 +185,16 @@ func runConfigCiCmdIntegration(
 
 	// RUN
 	return cmd.Execute()
+}
+
+func readWorkflowFile(t *testing.T, root string) string {
+	t.Helper()
+
+	path := filepath.Join(root, ci.DefaultGitHubWorkflowDir, ci.DefaultGitHubWorkflowFilename)
+	result, err := os.ReadFile(path)
+	assert.NilError(t, err)
+
+	return string(result)
 }
 
 // ----------------------

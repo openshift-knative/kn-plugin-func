@@ -1,6 +1,7 @@
 package ci_test
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -14,12 +15,13 @@ func TestGitHubWorkflow_Export(t *testing.T) {
 	cfg, _ := ci.NewCIConfig(
 		common.CurrentBranchStub("", nil),
 		common.WorkDirStub("", nil),
+		false,
 	)
 	gw := ci.NewGitHubWorkflow(cfg)
 	bufferWriter := ci.NewBufferWriter()
 
 	// WHEN
-	exportErr := gw.Export("path", bufferWriter)
+	exportErr := gw.Export("path", bufferWriter, true, &bytes.Buffer{})
 
 	// THEN
 	assert.NilError(t, exportErr, "unexpected error when exporting GitHub Workflow")

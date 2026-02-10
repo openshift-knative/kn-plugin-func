@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	dirPerm  = 0755 // o: rwx, g|u: r-x
-	filePerm = 0644 // o: rw,  g|u: r
+	dirPerm  = 0755 // u: rwx, g: r-x, o: r-x
+	filePerm = 0644 // u: rw-, g: r--, o: r--
 )
 
 // DefaultWorkflowWriter is the default implementation for writing workflow files to disk.
@@ -16,6 +16,7 @@ var DefaultWorkflowWriter = &fileWriter{}
 
 // WorkflowWriter defines the interface for writing workflow files.
 type WorkflowWriter interface {
+	Exist(path string) bool
 	Write(path string, raw []byte) error
 }
 
@@ -34,19 +35,32 @@ func (fw *fileWriter) Write(path string, raw []byte) error {
 	return nil
 }
 
-type bufferWriter struct {
+func (fw *fileWriter) Exist(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+// BufferWriter is a test double (fake) that implements WorkflowWriter
+// by writing to an in-memory buffer instead of the filesystem.
+type BufferWriter struct {
 	Path   string
 	Buffer *bytes.Buffer
 }
 
-// NewBufferWriter creates a new bufferWriter for testing purposes.
-func NewBufferWriter() *bufferWriter {
-	return &bufferWriter{Buffer: &bytes.Buffer{}}
+// NewBufferWriter creates a new BufferWriter test double.
+func NewBufferWriter() *BufferWriter {
+	return &BufferWriter{Buffer: &bytes.Buffer{}}
 }
 
-// Write stores the path and writes raw bytes to the internal buffer.
-func (bw *bufferWriter) Write(path string, raw []byte) error {
+// Write is a fake implementation that stores content in the buffer.
+func (bw *BufferWriter) Write(path string, raw []byte) error {
 	bw.Path = path
+	bw.Buffer.Reset()
 	_, err := bw.Buffer.Write(raw)
 	return err
+}
+
+// Exist is a fake implementation that returns true if the buffer has content.
+func (bw *BufferWriter) Exist(_ string) bool {
+	return bw.Buffer != nil && bw.Buffer.Len() > 0
 }

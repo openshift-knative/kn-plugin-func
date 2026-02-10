@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"fmt"
+	"io"
 
+	"github.com/ory/viper"
 	"github.com/spf13/cobra"
 
 	"knative.dev/func/cmd/ci"
@@ -32,9 +33,21 @@ func NewConfigCICmd(
 			ci.RegistryUserVariableNameFlag,
 			ci.RegistryPassSecretNameFlag,
 			ci.RegistryUrlVariableNameFlag,
+			ci.ForceFlag,
 		),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			return runConfigCIGitHub(cmd, loaderSaver, writer, currentBranch, workingDir)
+			// Detect explicit config via CLI flag or env var
+			workflowNameExplicit :=
+				cmd.Flags().Changed(ci.WorkflowNameFlag) || viper.IsSet(ci.WorkflowNameFlag)
+
+			return runConfigCIGitHub(
+				loaderSaver,
+				writer,
+				currentBranch,
+				workingDir,
+				cmd.OutOrStdout(),
+				workflowNameExplicit,
+			)
 		},
 	}
 
@@ -113,17 +126,24 @@ func NewConfigCICmd(
 		"Use a custom registry url variable name in the workflow, e.g. vars.YOUR_REGISTRY_URL",
 	)
 
+	cmd.Flags().Bool(
+		ci.ForceFlag,
+		ci.DefaultForce,
+		"Use to overwrite an existing GitHub workflow",
+	)
+
 	return cmd
 }
 
 func runConfigCIGitHub(
-	cmd *cobra.Command,
 	fnLoaderSaver common.FunctionLoaderSaver,
 	writer ci.WorkflowWriter,
 	currentBranch common.CurrentBranchFunc,
 	workingDir common.WorkDirFunc,
+	messageWriter io.Writer,
+	workflowNameExplicit bool,
 ) error {
-	cfg, err := ci.NewCIConfig(currentBranch, workingDir)
+	cfg, err := ci.NewCIConfig(currentBranch, workingDir, workflowNameExplicit)
 	if err != nil {
 		return err
 	}
@@ -133,11 +153,7 @@ func runConfigCIGitHub(
 		return err
 	}
 
-	fmt.Fprintln(cmd.OutOrStdout(), "--------------------------- Function GitHub Workflow Generation ---------------------------")
-	fmt.Fprintf(cmd.OutOrStdout(), "Func name: %s\n", f.Name)
-	fmt.Fprintf(cmd.OutOrStdout(), "Func runtime: %s\n", f.Runtime)
-
 	githubWorkflow := ci.NewGitHubWorkflow(cfg)
 	path := cfg.FnGitHubWorkflowFilepath(f.Root)
-	return githubWorkflow.Export(path, writer)
+	return githubWorkflow.Export(path, writer, cfg.Force(), messageWriter)
 }

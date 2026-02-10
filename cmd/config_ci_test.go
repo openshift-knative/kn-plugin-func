@@ -1,6 +1,7 @@
 package cmd_test
 
 import (
+	"bytes"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -58,7 +59,6 @@ func TestNewConfigCICmd_WorkflowYAMLHasCustomValues(t *testing.T) {
 	opts := defaultOpts()
 	opts.args = append(opts.args,
 		"--self-hosted-runner",
-		"--workflow-name=Custom Deploy",
 		"--kubeconfig-secret-name=DEV_CLUSTER_KUBECONFIG",
 		"--registry-login-url-variable-name=DEV_REGISTRY_LOGIN_URL",
 		"--registry-user-variable-name=DEV_REGISTRY_USER",
@@ -71,6 +71,56 @@ func TestNewConfigCICmd_WorkflowYAMLHasCustomValues(t *testing.T) {
 	// THEN
 	assert.NilError(t, result.executeErr)
 	assertCustomWorkflow(t, result.gwYamlString)
+}
+
+func TestNewConfigCICmd_WorkflowNameResolution(t *testing.T) {
+	customWorkflowName := "Deploy Checkout Service"
+	testCases := []struct {
+		name                 string
+		args                 []string
+		expectedWorkflowName string
+	}{
+		{
+			name:                 "default workflow name when no flags",
+			args:                 nil,
+			expectedWorkflowName: ci.DefaultWorkflowName,
+		},
+		{
+			name:                 "remote build uses remote default workflow name",
+			args:                 []string{"--remote"},
+			expectedWorkflowName: ci.DefaultRemoteBuildWorkflowName,
+		},
+		{
+			name:                 "custom name is preserved without remote",
+			args:                 []string{"--workflow-name=" + customWorkflowName},
+			expectedWorkflowName: customWorkflowName,
+		},
+		{
+			name:                 "custom name is preserved with remote",
+			args:                 []string{"--workflow-name=" + customWorkflowName, "--remote"},
+			expectedWorkflowName: customWorkflowName,
+		},
+		{
+			name:                 "custom name is preserved if its equal to default workflow name and remote is set",
+			args:                 []string{"--workflow-name=" + ci.DefaultWorkflowName, "--remote"},
+			expectedWorkflowName: ci.DefaultWorkflowName,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// GIVEN
+			opts := defaultOpts()
+			opts.args = append(opts.args, tc.args...)
+
+			// WHEN
+			result := runConfigCiCmd(t, opts)
+
+			// THEN
+			assert.NilError(t, result.executeErr)
+			assert.Assert(t, yamlContains(result.gwYamlString, "name: "+tc.expectedWorkflowName))
+		})
+	}
 }
 
 func TestNewConfigCICmd_WorkflowHasNoRegistryLogin(t *testing.T) {
@@ -276,15 +326,59 @@ func TestNewConfigCICmd_UnsupportedPlatformError(t *testing.T) {
 	assert.Error(t, result.executeErr, expectedErr.Error())
 }
 
+func TestNewConfigCICmd_ForceFlagOverwritesExistingWorkflow(t *testing.T) {
+	workflowName := "Func Deploy"
+	changedWorkflowName := "Sales Service Deployment"
+	sharedWriter := ci.NewBufferWriter()
+
+	t.Run("initial workflow creation succeeds", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.withWriter = sharedWriter
+
+		result := runConfigCiCmd(t, opts)
+
+		assert.NilError(t, result.executeErr)
+		assert.Assert(t, yamlContains(result.gwYamlString, workflowName))
+		assert.Assert(t, !strings.Contains(result.stdOut, forceWarning))
+	})
+
+	t.Run("overwrite without force flag fails", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.withWriter = sharedWriter
+		opts.args = append(opts.args, "--workflow-name="+changedWorkflowName)
+
+		result := runConfigCiCmd(t, opts)
+
+		assert.ErrorIs(t, result.executeErr, ci.ErrWorkflowExists)
+		assert.Assert(t, yamlContains(result.gwYamlString, workflowName))
+		assert.Assert(t, !strings.Contains(result.gwYamlString, changedWorkflowName))
+		assert.Assert(t, !strings.Contains(result.stdOut, forceWarning))
+	})
+
+	t.Run("overwrite with force flag succeeds and a warning message is printed to stdout", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.withWriter = sharedWriter
+		opts.args = append(opts.args, "--workflow-name="+changedWorkflowName, "--force")
+
+		result := runConfigCiCmd(t, opts)
+
+		assert.NilError(t, result.executeErr)
+		assert.Assert(t, yamlContains(result.gwYamlString, changedWorkflowName))
+		assert.Assert(t, !strings.Contains(result.gwYamlString, workflowName))
+		assert.Assert(t, strings.Contains(result.stdOut, forceWarning))
+	})
+}
+
 // ---------------------
 // END: Broad Unit Tests
 
 // START: Testing Framework
 // ------------------------
 const (
-	mainBranch  = "main"
-	issueBranch = "issue-778-current-branch"
-	fnName      = "github-ci-func"
+	mainBranch   = "main"
+	issueBranch  = "issue-778-current-branch"
+	fnName       = "github-ci-func"
+	forceWarning = "WARNING: --force flag is set, overwriting existing GitHub Workflow file"
 )
 
 type opts struct {
@@ -297,7 +391,8 @@ type opts struct {
 		dir string
 		err error
 	}
-	args []string
+	withWriter *ci.BufferWriter
+	args       []string
 }
 
 // defaultOpts returns test options for broad unit tests with sensible defaults:
@@ -322,14 +417,16 @@ func defaultOpts() opts {
 			dir: "",
 			err: nil,
 		},
-		args: []string{"ci"},
+		withWriter: nil,
+		args:       []string{"ci"},
 	}
 }
 
 type result struct {
 	executeErr error
 	gwYamlString,
-	actualPath string
+	actualPath,
+	stdOut string
 }
 
 func runConfigCiCmd(
@@ -348,15 +445,23 @@ func runConfigCiCmd(
 	loaderSaver.LoadFn = func(path string) (fn.Function, error) {
 		return fn.Function{Root: path}, nil
 	}
-	writer := ci.NewBufferWriter()
+
+	writer := opts.withWriter
+	if writer == nil {
+		writer = ci.NewBufferWriter()
+	}
+
 	currentBranch := common.CurrentBranchStub(
 		opts.withFakeGitCliReturn.output,
 		opts.withFakeGitCliReturn.err,
 	)
+
 	workingDir := common.WorkDirStub(
 		opts.withFakeGetCwdReturn.dir,
 		opts.withFakeGetCwdReturn.err,
 	)
+
+	messageBufferWriter := &bytes.Buffer{}
 
 	viper.Reset()
 
@@ -368,6 +473,7 @@ func runConfigCiCmd(
 		fnCmd.NewClient,
 	)
 	cmd.SetArgs(opts.args)
+	cmd.SetOut(messageBufferWriter)
 
 	// RUN
 	err := cmd.Execute()
@@ -377,6 +483,7 @@ func runConfigCiCmd(
 		err,
 		writer.Buffer.String(),
 		writer.Path,
+		messageBufferWriter.String(),
 	}
 }
 
@@ -420,7 +527,7 @@ func assertDefaultWorkflowWithBranch(t *testing.T, actualGw, branch string) {
 
 	assert.Assert(t, yamlContains(actualGw, "Install func cli"))
 	assert.Assert(t, yamlContains(actualGw, "functions-dev/action@main"))
-	assert.Assert(t, yamlContains(actualGw, "version: knative-v1.20.1"))
+	assert.Assert(t, yamlContains(actualGw, "version: knative-v1.21.0"))
 	assert.Assert(t, yamlContains(actualGw, "name: func"))
 
 	assert.Assert(t, yamlContains(actualGw, "Deploy function"))
@@ -439,7 +546,6 @@ func yamlContains(yaml, substr string) cmp.Comparison {
 }
 
 func assertCustomWorkflow(t *testing.T, actualGw string) {
-	assert.Assert(t, yamlContains(actualGw, "Custom Deploy"))
 	assert.Assert(t, yamlContains(actualGw, "self-hosted"))
 	assert.Assert(t, yamlContains(actualGw, "DEV_CLUSTER_KUBECONFIG"))
 	assert.Assert(t, yamlContains(actualGw, "DEV_REGISTRY_LOGIN_URL"))

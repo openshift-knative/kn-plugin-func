@@ -18,10 +18,12 @@ edge cases into account.
 ## Commands
 
 ### Build & Development
+
 - `make all` - Build binary and regenerate docs
 - `make build` - Build for current OS
 
 ### Testing strategy reference
+
 Before committing, test locally following the table below:
 
 | If changed | Target | Description |
@@ -32,19 +34,21 @@ Before committing, test locally following the table below:
 | Significant architectural changes | `make test-full` | e2e tests (cluster required - read `CONTRIBUTING.md`) |
 
 ### Generated Files
+
 - `./hack/update-codegen.sh` - update embedded filesystem & regenerate docs
 - `make check-embedded-fs` - check embedded FS is up to date with templates
-
 
 ## Boundaries
 
 ### Always Do
+
 - Run `make test` before considering any change complete
 - Run `make check` before commits
 - Run `make check-embedded-fs` after modifying `templates/`
 - Ask before deleting ANY file or significant code block
 
 ### Ask First
+
 - Security-related code changes (authentication, credentials, secrets handling)
 - API changes
 - Adding new dependencies
@@ -52,6 +56,7 @@ Before committing, test locally following the table below:
 - Architectural decisions
 
 ### Never Do
+
 - Edit generated files directly:
   - `generate/zz_filesystem_generated.go`
   - `schema/func_yaml-schema.json`
@@ -63,11 +68,12 @@ Before committing, test locally following the table below:
 ## Common Pitfalls
 
 ### Codegen Sync
+
 After modifying `templates/` or making documentation changes, you MUST run:
+
 ```bash
 ./hack/update-codegen.sh
 ```
-
 
 ## Contributing
 

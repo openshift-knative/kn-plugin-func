@@ -23,8 +23,9 @@ const (
 	BranchFlag    = "branch"
 	DefaultBranch = "main"
 
-	WorkflowNameFlag    = "workflow-name"
-	DefaultWorkflowName = "Func Deploy"
+	WorkflowNameFlag               = "workflow-name"
+	DefaultWorkflowName            = "Func Deploy"
+	DefaultRemoteBuildWorkflowName = "Remote " + DefaultWorkflowName
 
 	KubeconfigSecretNameFlag    = "kubeconfig-secret-name"
 	DefaultKubeconfigSecretName = "KUBECONFIG"
@@ -52,6 +53,9 @@ const (
 
 	UseSelfHostedRunnerFlag    = "self-hosted-runner"
 	DefaultUseSelfHostedRunner = false
+
+	ForceFlag    = "force"
+	DefaultForce = false
 )
 
 // CIConfig readonly configuration
@@ -69,42 +73,37 @@ type CIConfig struct {
 	useRegistryLogin,
 	useSelfHostedRunner,
 	useRemoteBuild,
-	useWorkflowDispatch bool
+	useWorkflowDispatch,
+	force bool
 }
 
 func NewCIConfig(
 	currentBranch common.CurrentBranchFunc,
 	workingDir common.WorkDirFunc,
+	workflowNameExplicit bool,
 ) (CIConfig, error) {
-	platform := viper.GetString(PlatformFlag)
-	if strings.ToLower(platform) != DefaultPlatform {
-		return CIConfig{}, fmt.Errorf("%s support is not implemented", platform)
+	if err := resolvePlatform(); err != nil {
+		return CIConfig{}, err
 	}
 
-	path := viper.GetString(PathFlag)
-	if path == "" || path == "." {
-		cwd, err := workingDir()
-		if err != nil {
-			return CIConfig{}, err
-		}
-		path = cwd
+	path, err := resolvePath(workingDir)
+	if err != nil {
+		return CIConfig{}, err
 	}
 
-	branch := viper.GetString(BranchFlag)
-	if branch == "" {
-		var err error
-		branch, err = currentBranch(path)
-		if err != nil {
-			return CIConfig{}, err
-		}
+	branch, err := resolveBranch(path, currentBranch)
+	if err != nil {
+		return CIConfig{}, err
 	}
+
+	workflowName := resolveWorkflowName(workflowNameExplicit)
 
 	return CIConfig{
 		githubWorkflowDir:      DefaultGitHubWorkflowDir,
 		githubWorkflowFilename: DefaultGitHubWorkflowFilename,
 		path:                   path,
 		branch:                 branch,
-		workflowName:           viper.GetString(WorkflowNameFlag),
+		workflowName:           workflowName,
 		kubeconfigSecret:       viper.GetString(KubeconfigSecretNameFlag),
 		registryLoginUrlVar:    viper.GetString(RegistryLoginUrlVariableNameFlag),
 		registryUserVar:        viper.GetString(RegistryUserVariableNameFlag),
@@ -114,7 +113,58 @@ func NewCIConfig(
 		useSelfHostedRunner:    viper.GetBool(UseSelfHostedRunnerFlag),
 		useRemoteBuild:         viper.GetBool(UseRemoteBuildFlag),
 		useWorkflowDispatch:    viper.GetBool(WorkflowDispatchFlag),
+		force:                  viper.GetBool(ForceFlag),
 	}, nil
+}
+
+func resolvePlatform() error {
+	platform := viper.GetString(PlatformFlag)
+	if strings.ToLower(platform) != DefaultPlatform {
+		return fmt.Errorf("%s support is not implemented", platform)
+	}
+
+	return nil
+}
+
+func resolvePath(workingDir common.WorkDirFunc) (string, error) {
+	path := viper.GetString(PathFlag)
+	if path != "" && path != "." {
+		return path, nil
+	}
+
+	cwd, err := workingDir()
+	if err != nil {
+		return "", err
+	}
+
+	return cwd, nil
+}
+
+func resolveBranch(path string, currentBranch common.CurrentBranchFunc) (string, error) {
+	branch := viper.GetString(BranchFlag)
+	if branch != "" {
+		return branch, nil
+	}
+
+	branch, err := currentBranch(path)
+	if err != nil {
+		return "", err
+	}
+
+	return branch, nil
+}
+
+func resolveWorkflowName(explicit bool) string {
+	workflowName := viper.GetString(WorkflowNameFlag)
+	if explicit {
+		return workflowName
+	}
+
+	if viper.GetBool(UseRemoteBuildFlag) {
+		return DefaultRemoteBuildWorkflowName
+	}
+
+	return DefaultWorkflowName
 }
 
 func (cc *CIConfig) FnGitHubWorkflowDir(fnRoot string) string {
@@ -171,4 +221,8 @@ func (cc *CIConfig) RegistryPassSecret() string {
 
 func (cc *CIConfig) RegistryUrlVar() string {
 	return cc.registryUrlVar
+}
+
+func (cc *CIConfig) Force() bool {
+	return cc.force
 }

@@ -2,10 +2,17 @@ package ci
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"io"
 
 	"gopkg.in/yaml.v3"
 )
+
+const defaultFuncCliVersion = "knative-v1.21.0"
+
+// ErrWorkflowExists is returned when a GitHub workflow file already exists and --force is not specified.
+var ErrWorkflowExists = errors.New("existing GitHub workflow detected, overwrite using the --force option")
 
 type githubWorkflow struct {
 	Name string           `yaml:"name"`
@@ -35,7 +42,7 @@ type step struct {
 }
 
 func NewGitHubWorkflow(conf CIConfig) *githubWorkflow {
-	name := createWorkflowName(conf)
+	name := conf.WorkflowName()
 	runsOn := createRunsOn(conf)
 	pushTrigger := createPushTrigger(conf)
 
@@ -56,15 +63,6 @@ func NewGitHubWorkflow(conf CIConfig) *githubWorkflow {
 			},
 		},
 	}
-}
-
-func createWorkflowName(conf CIConfig) string {
-	result := conf.WorkflowName()
-	if conf.UseRemoteBuild() {
-		result = "Remote Func Deploy"
-	}
-
-	return result
 }
 
 func createRunsOn(conf CIConfig) string {
@@ -120,7 +118,7 @@ func createRegistryLoginStep(conf CIConfig, steps []step) []step {
 func createFuncCLIInstallStep(steps []step) []step {
 	installFuncCli := newStep("Install func cli").
 		withUses("functions-dev/action@main").
-		withActionConfig("version", "knative-v1.20.1").
+		withActionConfig("version", defaultFuncCliVersion).
 		withActionConfig("name", "func")
 
 	return append(steps, *installFuncCli)
@@ -174,7 +172,16 @@ func newVariable(key string) string {
 	return fmt.Sprintf("${{ vars.%s }}", key)
 }
 
-func (gw *githubWorkflow) Export(path string, w WorkflowWriter) error {
+func (gw *githubWorkflow) Export(path string, w WorkflowWriter, force bool, m io.Writer) error {
+	if !force && w.Exist(path) {
+		return ErrWorkflowExists
+	}
+
+	if w.Exist(path) {
+		// best-effort user message; errors are non-critical
+		_, _ = fmt.Fprintf(m, "WARNING: --force flag is set, overwriting existing GitHub Workflow file\n")
+	}
+
 	raw, err := gw.toYaml()
 	if err != nil {
 		return err

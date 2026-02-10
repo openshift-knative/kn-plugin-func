@@ -35,6 +35,7 @@ __pycache__
 AGENTS.override.md
 .claude/*.local.*
 .claude/pr/*
+.roo/*
 
 # E2E Tests
 /e2e/testdata/default_home/go
