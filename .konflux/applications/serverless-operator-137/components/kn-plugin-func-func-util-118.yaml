@@ -7,7 +7,7 @@ metadata:
   name: kn-plugin-func-func-util-118
 spec:
   componentName: kn-plugin-func-func-util-118
-  application: serverless-operator-138
+  application: serverless-operator-137
    
   source:
     git:
