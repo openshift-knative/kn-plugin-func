@@ -19,6 +19,10 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
       groups:
         major:
             update-types:
@@ -50,8 +54,6 @@ updates:
             patterns:
                 - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - istio.io/*
         security:
             update-types:
                 - patch
@@ -143,6 +145,10 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
       groups:
         major:
             update-types:
@@ -174,8 +180,6 @@ updates:
             patterns:
                 - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - istio.io/*
         security:
             update-types:
                 - patch
@@ -267,6 +271,10 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
       groups:
         major:
             update-types:
@@ -298,8 +306,6 @@ updates:
             patterns:
                 - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - istio.io/*
         security:
             update-types:
                 - patch
@@ -391,6 +397,10 @@ updates:
           update-types:
             - version-update:semver-major
             - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
       groups:
         major:
             update-types:
@@ -422,8 +432,6 @@ updates:
             patterns:
                 - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - istio.io/*
         security:
             update-types:
                 - patch
@@ -432,9 +440,9 @@ updates:
             patterns:
                 - '*'
             applies-to: security-updates
-      target-branch: release-v1.18
+      target-branch: release-v1.21
       commit-message:
-        prefix: '[release-v1.18][gomod]'
+        prefix: '[release-v1.21][gomod]'
       open-pull-requests-limit: 10
     - package-ecosystem: maven
       directories:
@@ -492,7 +500,7 @@ updates:
             patterns:
                 - '*'
             applies-to: security-updates
-      target-branch: release-v1.18
+      target-branch: release-v1.21
       commit-message:
-        prefix: '[release-v1.18][maven]'
+        prefix: '[release-v1.21][maven]'
       open-pull-requests-limit: 10
