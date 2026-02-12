@@ -15,7 +15,7 @@ RUN go build -tags strictfipsruntime,exclude_graphdriver_btrfs -o /usr/bin/main 
 
 FROM $GO_RUNTIME
 
-ARG VERSION=knative-nightly
+ARG VERSION=knative-v1.21
 
 RUN microdnf install -y socat tar
 
@@ -41,6 +41,6 @@ LABEL \
       io.openshift.tags="func-util" \
       vendor="Red Hat, Inc." \
       release=$VERSION \
-      cpe="cpe:/a:redhat:openshift_serverless:::el9"
+      cpe="cpe:/a:redhat:openshift_serverless:1.38::el9"
 
 ENTRYPOINT ["/usr/bin/bash"]
