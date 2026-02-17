@@ -27,40 +27,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - istio.io/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
-                - istio.io/*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.15
       commit-message:
@@ -91,36 +71,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.15
       commit-message:
@@ -153,40 +117,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - istio.io/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
-                - istio.io/*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.16
       commit-message:
@@ -217,36 +161,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.16
       commit-message:
@@ -279,40 +207,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - istio.io/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
-                - istio.io/*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.17
       commit-message:
@@ -343,36 +251,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.17
       commit-message:
@@ -405,40 +297,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - istio.io/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - knative.dev/*
-                - k8s.io/*
-                - github.com/openshift/*
-                - sigs.k8s.io/controller-runtime*
-                - istio.io/*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.21
       commit-message:
@@ -469,36 +341,20 @@ updates:
         major:
             update-types:
                 - major
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         minor:
             update-types:
                 - minor
-            patterns:
-                - '*'
             applies-to: version-updates
-            exclude-patterns:
-                - io.vertx*
-                - com.redhat.quarkus.platform*
-                - io.quarkus*
         patch:
             update-types:
                 - patch
-            patterns:
-                - '*'
             applies-to: version-updates
         security:
             update-types:
                 - patch
                 - minor
                 - major
-            patterns:
-                - '*'
             applies-to: security-updates
       target-branch: release-v1.21
       commit-message:
