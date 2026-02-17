@@ -87,7 +87,7 @@ allocate_cluster() {
   ( set -o pipefail; (eventing && namespace) 2>&1 | sed  -e 's/^/evt /')&
   ( set -o pipefail; registry 2>&1 | sed  -e 's/^/reg /') &
   ( set -o pipefail; dapr_runtime 2>&1 | sed  -e 's/^/dpr /')&
-  ( set -o pipefail; (tekton && pac) 2>&1 | sed  -e 's/^/tkt /')&
+  ( set -o pipefail; (tekton && pac && install_ocp_res ) 2>&1 | sed  -e 's/^/tkt /')&
 
   local job
   for job in $(jobs -p); do
@@ -129,6 +129,9 @@ containerdConfigPatches:
     endpoint = ["http://func-registry:5000"]
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."quay.io"]
     endpoint = ["http://func-registry:5000"]
+  [plugins."io.containerd.grpc.v1.cri".registry.configs."registry.redhat.io".auth]
+    username = "${RH_REG_USR}"
+    password = "${RH_REG_PWD}"
 EOF
   sleep 10
   $KUBECTL wait pod --for=condition=Ready -l '!job-name' -n kube-system --timeout=5m
@@ -667,6 +670,11 @@ next_steps() {
   echo -e "The kubeconfig for your test cluster has been saved to:${reset}"
   echo -e "${KUBECONFIG}"
   echo -e ""
+}
+
+install_ocp_res() {
+  $KUBECTL create namespace openshift-pipelines --dry-run=client -o yaml | $KUBECTL apply -f -
+  $KUBECTL apply --namespace openshift-pipelines -f https://github.com/openshift-pipelines/tektoncd-catalog/raw/p/stepactions/stepaction-git-clone/0.4.1/stepaction-git-clone.yaml
 }
 
 main "$@"
