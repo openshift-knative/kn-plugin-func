@@ -5,7 +5,7 @@ func GetDevConsolePipelines() string {
 }
 
 func GetNodeJSPipeline() string {
-	return `apiVersion: tekton.dev/v1beta1
+	return `apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: devconsole-nodejs-function-pipeline
@@ -32,7 +32,7 @@ spec:
     - description: Builder image to be used
       name: BUILDER_IMAGE
       type: string
-      default: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:16-ubi8
+      default: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:22-minimal-ubi9
     - description: Environment variables to set during build time
       name: BUILD_ENVS
       type: array
@@ -43,27 +43,24 @@ spec:
         image.
       name: s2iImageScriptsUrl
       type: string
-  resources: []
+    - description: Verify TLS when pushing to registry
+      name: tlsVerify
+      type: string
+      default: 'true'
   workspaces:
     - description: Directory where function source is located.
       name: source-workspace
   tasks:
-    - name: fetch-sources
-      params:
-        - name: url
-          value: $(params.GIT_REPO)
-        - name: revision
-          value: $(params.GIT_REVISION)
-      taskRef:
-        kind: ClusterTask
-        name: git-clone
-      workspaces:
-        - name: output
-          workspace: source-workspace
     - name: build
       params:
+        - name: GIT_REPOSITORY
+          value: $(params.GIT_REPO)
+        - name: GIT_REVISION
+          value: $(params.GIT_REVISION)
         - name: IMAGE
           value: $(params.IMAGE_NAME)
+        - name: REGISTRY
+          value: ''
         - name: PATH_CONTEXT
           value: $(params.PATH_CONTEXT)
         - name: BUILDER_IMAGE
@@ -73,28 +70,23 @@ spec:
             - '$(params.BUILD_ENVS[*])'
         - name: S2I_IMAGE_SCRIPTS_URL
           value: $(params.s2iImageScriptsUrl)
-      runAfter:
-        - fetch-sources
+        - name: TLSVERIFY
+          value: $(params.tlsVerify)
       taskRef:
-        kind: ClusterTask
-        name: func-s2i
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: func-s2i
+          - name: namespace
+            value: openshift-pipelines
+        resolver: cluster
       workspaces:
         - name: source
           workspace: source-workspace
-    - name: deploy
-      params:
-        - name: path
-          value: $(workspaces.source.path)/$(params.PATH_CONTEXT)
-        - name: image
-          value: $(params.IMAGE_NAME)@$(tasks.build.results.IMAGE_DIGEST)
-      runAfter:
-        - build
-      taskRef:
-        kind: ClusterTask
-        name: func-deploy
-      workspaces:
-        - name: source
+          subPath: "src"
+        - name: cache
           workspace: source-workspace
-  finally: []
+          subPath: "cache"
 `
 }
