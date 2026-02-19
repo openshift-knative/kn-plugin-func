@@ -1,11 +1,16 @@
 package tekton
 
+import (
+	v1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
+	"sigs.k8s.io/yaml"
+)
+
 func GetDevConsolePipelines() string {
 	return GetNodeJSPipeline()
 }
 
 func GetNodeJSPipeline() string {
-	return `apiVersion: tekton.dev/v1
+	pipelineYaml := `apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: devconsole-nodejs-function-pipeline
@@ -61,6 +66,8 @@ spec:
           value: $(params.IMAGE_NAME)
         - name: REGISTRY
           value: ''
+        - name: LOGLEVEL
+          value: 0
         - name: PATH_CONTEXT
           value: $(params.PATH_CONTEXT)
         - name: BUILDER_IMAGE
@@ -89,4 +96,23 @@ spec:
           workspace: source-workspace
           subPath: "cache"
 `
+	var pipeline v1.Pipeline
+	err := yaml.UnmarshalStrict([]byte(pipelineYaml), &pipeline)
+	if err != nil {
+		panic(err)
+	}
+	var task v1.Task
+	err = yaml.UnmarshalStrict([]byte(getS2ITask()), &task)
+	if err != nil {
+		panic(err)
+	}
+	pipeline.Spec.Tasks[0].TaskRef = nil
+	pipeline.Spec.Tasks[0].TaskSpec = &v1.EmbeddedTask{
+		TaskSpec: task.Spec,
+	}
+	bs, err := yaml.Marshal(pipeline)
+	if err != nil {
+		panic(err)
+	}
+	return string(bs)
 }
