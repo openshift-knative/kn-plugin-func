@@ -34,6 +34,7 @@ func NewConfigCICmd(
 			ci.RegistryPassSecretNameFlag,
 			ci.RegistryUrlVariableNameFlag,
 			ci.ForceFlag,
+			ci.VerboseFlag,
 		),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Detect explicit config via CLI flag or env var
@@ -58,6 +59,7 @@ func NewConfigCICmd(
 	)
 
 	addPathFlag(cmd)
+	addVerboseFlag(cmd, ci.DefaultVerbose)
 
 	cmd.Flags().Bool(
 		ci.UseRegistryLoginFlag,
@@ -155,5 +157,17 @@ func runConfigCIGitHub(
 
 	githubWorkflow := ci.NewGitHubWorkflow(cfg)
 	path := cfg.FnGitHubWorkflowFilepath(f.Root)
-	return githubWorkflow.Export(path, writer, cfg.Force(), messageWriter)
+	if err := githubWorkflow.Export(path, writer, cfg.Force(), messageWriter); err != nil {
+		return err
+	}
+
+	if cfg.Verbose() {
+		// best-effort user message; errors are non-critical
+		_ = ci.PrintConfiguration(messageWriter, cfg)
+		return nil
+	}
+
+	// best-effort user message; errors are non-critical
+	_ = ci.PrintPostExportMessage(messageWriter, cfg)
+	return nil
 }

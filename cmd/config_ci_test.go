@@ -74,7 +74,6 @@ func TestNewConfigCICmd_WorkflowYAMLHasCustomValues(t *testing.T) {
 }
 
 func TestNewConfigCICmd_WorkflowNameResolution(t *testing.T) {
-	customWorkflowName := "Deploy Checkout Service"
 	testCases := []struct {
 		name                 string
 		args                 []string
@@ -121,6 +120,21 @@ func TestNewConfigCICmd_WorkflowNameResolution(t *testing.T) {
 			assert.Assert(t, yamlContains(result.gwYamlString, "name: "+tc.expectedWorkflowName))
 		})
 	}
+}
+
+func TestNewConfigCICmd_WorkflowNameFromEnvVarPreserveWithRemote(t *testing.T) {
+	// Regression test: env var FUNC_WORKFLOW_NAME was ignored when --remote was set,
+	// because only cmd.Flags().Changed() was checked (not viper.IsSet())
+	opts := defaultOpts()
+	opts.args = append(opts.args, "--remote")
+	t.Setenv("FUNC_WORKFLOW_NAME", customWorkflowName)
+
+	// WHEN
+	result := runConfigCiCmd(t, opts)
+
+	// THEN
+	assert.NilError(t, result.executeErr)
+	assert.Assert(t, yamlContains(result.gwYamlString, "name: "+customWorkflowName))
 }
 
 func TestNewConfigCICmd_WorkflowHasNoRegistryLogin(t *testing.T) {
@@ -369,17 +383,162 @@ func TestNewConfigCICmd_ForceFlagOverwritesExistingWorkflow(t *testing.T) {
 	})
 }
 
+func TestNewConfigCICmd_VerboseFlagPrintsWorkflowDetails(t *testing.T) {
+	t.Run("verbose flag prints default Github Workflow configuration", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.args = append(opts.args, "--verbose")
+		expectedMessage := fmt.Sprintf(ci.MainLayoutPlainText,
+			defaultOutputPath,
+			ci.DefaultWorkflowName,
+			issueBranch,
+			"host",
+			"ubuntu-latest",
+			"enabled",
+			"disabled",
+			"disabled",
+		) + fmt.Sprintf(ci.RequireManyPlainText,
+			"secrets."+ci.DefaultKubeconfigSecretName,
+			"secrets."+ci.DefaultRegistryPassSecretName,
+			"vars."+ci.DefaultRegistryLoginUrlVariableName,
+			"vars."+ci.DefaultRegistryUserVariableName,
+			"vars."+ci.DefaultRegistryUrlVariableName,
+		)
+
+		result := runConfigCiCmd(t, opts)
+
+		assertMessage(t, result, expectedMessage)
+	})
+
+	t.Run("verbose flag prints custom Github Workflow configuration", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.args = append(opts.args,
+			"--verbose",
+			"--self-hosted-runner",
+			"--workflow-name=Deploy Checkout Service",
+			"--remote",
+			"--workflow-dispatch",
+			"--force",
+			"--kubeconfig-secret-name=DEV_CLUSTER_KUBECONFIG",
+			"--registry-pass-secret-name=DEV_REGISTRY_PASS",
+			"--registry-login-url-variable-name=DEV_REGISTRY_LOGIN_URL",
+			"--registry-user-variable-name=DEV_REGISTRY_USER",
+			"--registry-url-variable-name=DEV_REGISTRY_URL",
+		)
+		expectedMessage := fmt.Sprintf(ci.MainLayoutPlainText,
+			defaultOutputPath,
+			customWorkflowName,
+			issueBranch,
+			"remote",
+			"self-hosted",
+			"enabled",
+			"enabled",
+			"enabled",
+		) + fmt.Sprintf(ci.RequireManyPlainText,
+			"secrets.DEV_CLUSTER_KUBECONFIG",
+			"secrets.DEV_REGISTRY_PASS",
+			"vars.DEV_REGISTRY_LOGIN_URL",
+			"vars.DEV_REGISTRY_USER",
+			"vars.DEV_REGISTRY_URL",
+		)
+
+		result := runConfigCiCmd(t, opts)
+
+		assertMessage(t, result, expectedMessage)
+	})
+
+	t.Run("verbose flag prints custom Github Workflow configuration without registry login", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.args = append(opts.args,
+			"--verbose",
+			"--use-registry-login=false",
+		)
+		expectedMessage := fmt.Sprintf(ci.MainLayoutPlainText,
+			defaultOutputPath,
+			ci.DefaultWorkflowName,
+			issueBranch,
+			"host",
+			"ubuntu-latest",
+			"disabled",
+			"disabled",
+			"disabled",
+		) + fmt.Sprintf(ci.RequireOnePlainText,
+			"secrets."+ci.DefaultKubeconfigSecretName,
+		)
+
+		result := runConfigCiCmd(t, opts)
+
+		assertMessage(t, result, expectedMessage)
+	})
+}
+
+func TestNewConfigCICmd_PostExportMessageShown(t *testing.T) {
+	t.Run("a message is shown with all secrets and variables for k8 and registry which needs creation", func(t *testing.T) {
+		opts := defaultOpts()
+		expectedMessage := fmt.Sprintf(ci.PostExportManyPlainText,
+			defaultOutputPath,
+			"secrets."+ci.DefaultKubeconfigSecretName,
+			"secrets."+ci.DefaultRegistryPassSecretName,
+			"vars."+ci.DefaultRegistryLoginUrlVariableName,
+			"vars."+ci.DefaultRegistryUserVariableName,
+			"vars."+ci.DefaultRegistryUrlVariableName,
+		)
+
+		result := runConfigCiCmd(t, opts)
+
+		assertMessage(t, result, expectedMessage)
+	})
+
+	t.Run("a message is shown with a secret for k8 which needs creation", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.args = append(opts.args, "--use-registry-login=false")
+		expectedMessage := fmt.Sprintf(ci.PostExportOnePlainText,
+			defaultOutputPath,
+			"secrets."+ci.DefaultKubeconfigSecretName,
+		)
+
+		result := runConfigCiCmd(t, opts)
+
+		assertMessage(t, result, expectedMessage)
+	})
+}
+
+func TestNewConfigCICmd_VerboseAndPostExportMessageAreMutuallyExclusive(t *testing.T) {
+	t.Run("verbose flag shows configuration, not post-export message", func(t *testing.T) {
+		opts := defaultOpts()
+		opts.args = append(opts.args, "--verbose")
+
+		result := runConfigCiCmd(t, opts)
+
+		assert.NilError(t, result.executeErr)
+		assert.Assert(t, strings.Contains(result.stdOut, "GitHub Workflow Configuration"))
+		assert.Assert(t, !strings.Contains(result.stdOut, "GitHub Workflow created at:"))
+	})
+
+	t.Run("without verbose flag shows post-export message, not configuration", func(t *testing.T) {
+		opts := defaultOpts()
+
+		result := runConfigCiCmd(t, opts)
+
+		assert.NilError(t, result.executeErr)
+		assert.Assert(t, strings.Contains(result.stdOut, "GitHub Workflow created at:"))
+		assert.Assert(t, !strings.Contains(result.stdOut, "GitHub Workflow Configuration"))
+	})
+}
+
 // ---------------------
 // END: Broad Unit Tests
 
 // START: Testing Framework
 // ------------------------
 const (
-	mainBranch   = "main"
-	issueBranch  = "issue-778-current-branch"
-	fnName       = "github-ci-func"
-	forceWarning = "WARNING: --force flag is set, overwriting existing GitHub Workflow file"
+	mainBranch         = "main"
+	issueBranch        = "issue-778-current-branch"
+	fnName             = "github-ci-func"
+	forceWarning       = "WARNING: --force flag is set, overwriting existing GitHub Workflow file"
+	customWorkflowName = "Deploy Checkout Service"
 )
+
+var defaultOutputPath = filepath.Join(ci.DefaultGitHubWorkflowDir, ci.DefaultGitHubWorkflowFilename)
 
 type opts struct {
 	enableFeature        bool
@@ -551,6 +710,12 @@ func assertCustomWorkflow(t *testing.T, actualGw string) {
 	assert.Assert(t, yamlContains(actualGw, "DEV_REGISTRY_LOGIN_URL"))
 	assert.Assert(t, yamlContains(actualGw, "DEV_REGISTRY_USER"))
 	assert.Assert(t, yamlContains(actualGw, "DEV_REGISTRY_PASS"))
+}
+
+func assertMessage(t *testing.T, res result, expectedMessage string) {
+	assert.NilError(t, res.executeErr)
+	assert.Assert(t, strings.Contains(res.stdOut, expectedMessage),
+		"\nexpected:\n%s\n\ngot:\n%s", expectedMessage, res.stdOut)
 }
 
 // ----------------------

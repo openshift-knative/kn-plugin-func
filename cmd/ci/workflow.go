@@ -42,10 +42,6 @@ type step struct {
 }
 
 func NewGitHubWorkflow(conf CIConfig) *githubWorkflow {
-	name := conf.WorkflowName()
-	runsOn := createRunsOn(conf)
-	pushTrigger := createPushTrigger(conf)
-
 	var steps []step
 	steps = createCheckoutStep(steps)
 	steps = createK8ContextStep(conf, steps)
@@ -54,23 +50,15 @@ func NewGitHubWorkflow(conf CIConfig) *githubWorkflow {
 	steps = createFuncDeployStep(conf, steps)
 
 	return &githubWorkflow{
-		Name: name,
-		On:   pushTrigger,
+		Name: conf.WorkflowName(),
+		On:   createPushTrigger(conf),
 		Jobs: map[string]job{
 			"deploy": {
-				RunsOn: runsOn,
+				RunsOn: runner(conf),
 				Steps:  steps,
 			},
 		},
 	}
-}
-
-func createRunsOn(conf CIConfig) string {
-	runsOn := "ubuntu-latest"
-	if conf.UseSelfHostedRunner() {
-		runsOn = "self-hosted"
-	}
-	return runsOn
 }
 
 func createPushTrigger(conf CIConfig) workflowTriggers {
@@ -162,14 +150,6 @@ func (s *step) withActionConfig(key, value string) *step {
 	s.With[key] = value
 
 	return s
-}
-
-func newSecret(key string) string {
-	return fmt.Sprintf("${{ secrets.%s }}", key)
-}
-
-func newVariable(key string) string {
-	return fmt.Sprintf("${{ vars.%s }}", key)
 }
 
 func (gw *githubWorkflow) Export(path string, w WorkflowWriter, force bool, m io.Writer) error {

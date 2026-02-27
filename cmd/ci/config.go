@@ -56,6 +56,9 @@ const (
 
 	ForceFlag    = "force"
 	DefaultForce = false
+
+	VerboseFlag    = "verbose"
+	DefaultVerbose = false
 )
 
 // CIConfig readonly configuration
@@ -74,7 +77,8 @@ type CIConfig struct {
 	useSelfHostedRunner,
 	useRemoteBuild,
 	useWorkflowDispatch,
-	force bool
+	force,
+	verbose bool
 }
 
 func NewCIConfig(
@@ -114,6 +118,7 @@ func NewCIConfig(
 		useRemoteBuild:         viper.GetBool(UseRemoteBuildFlag),
 		useWorkflowDispatch:    viper.GetBool(WorkflowDispatchFlag),
 		force:                  viper.GetBool(ForceFlag),
+		verbose:                viper.GetBool(VerboseFlag),
 	}, nil
 }
 
@@ -167,62 +172,70 @@ func resolveWorkflowName(explicit bool) string {
 	return DefaultWorkflowName
 }
 
-func (cc *CIConfig) FnGitHubWorkflowDir(fnRoot string) string {
+func (cc CIConfig) fnGitHubWorkflowDir(fnRoot string) string {
 	return filepath.Join(fnRoot, cc.githubWorkflowDir)
 }
 
-func (cc *CIConfig) FnGitHubWorkflowFilepath(fnRoot string) string {
-	return filepath.Join(cc.FnGitHubWorkflowDir(fnRoot), cc.githubWorkflowFilename)
+func (cc CIConfig) FnGitHubWorkflowFilepath(fnRoot string) string {
+	return filepath.Join(cc.fnGitHubWorkflowDir(fnRoot), cc.githubWorkflowFilename)
 }
 
-func (cc *CIConfig) Path() string {
+func (cc CIConfig) Path() string {
 	return cc.path
 }
 
-func (cc *CIConfig) WorkflowName() string {
+func (cc CIConfig) WorkflowName() string {
 	return cc.workflowName
 }
 
-func (cc *CIConfig) Branch() string {
+func (cc CIConfig) Branch() string {
 	return cc.branch
 }
 
-func (cc *CIConfig) UseRegistryLogin() bool {
+func (cc CIConfig) UseRegistryLogin() bool {
 	return cc.useRegistryLogin
 }
 
-func (cc *CIConfig) UseSelfHostedRunner() bool {
+func (cc CIConfig) UseSelfHostedRunner() bool {
 	return cc.useSelfHostedRunner
 }
 
-func (cc *CIConfig) UseRemoteBuild() bool {
+func (cc CIConfig) UseRemoteBuild() bool {
 	return cc.useRemoteBuild
 }
 
-func (cc *CIConfig) UseWorkflowDispatch() bool {
+func (cc CIConfig) UseWorkflowDispatch() bool {
 	return cc.useWorkflowDispatch
 }
 
-func (cc *CIConfig) KubeconfigSecret() string {
+func (cc CIConfig) KubeconfigSecret() string {
 	return cc.kubeconfigSecret
 }
 
-func (cc *CIConfig) RegistryLoginUrlVar() string {
+func (cc CIConfig) RegistryLoginUrlVar() string {
 	return cc.registryLoginUrlVar
 }
 
-func (cc *CIConfig) RegistryUserVar() string {
+func (cc CIConfig) RegistryUserVar() string {
 	return cc.registryUserVar
 }
 
-func (cc *CIConfig) RegistryPassSecret() string {
+func (cc CIConfig) RegistryPassSecret() string {
 	return cc.registryPassSecret
 }
 
-func (cc *CIConfig) RegistryUrlVar() string {
+func (cc CIConfig) RegistryUrlVar() string {
 	return cc.registryUrlVar
 }
 
-func (cc *CIConfig) Force() bool {
+func (cc CIConfig) Force() bool {
 	return cc.force
+}
+
+func (cc CIConfig) Verbose() bool {
+	return cc.verbose
+}
+
+func (cc CIConfig) OutputPath() string {
+	return filepath.Join(cc.githubWorkflowDir, cc.githubWorkflowFilename)
 }
