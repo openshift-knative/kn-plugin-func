@@ -33,7 +33,6 @@ echo "=== building func binary"
 make build
 
 # Patch Tests for Openshift
-sed -i 's|http://%v.%s.%s|http://%v-%s.%s|' ./e2e/e2e_*.go
 sed -i 's|"--builder", "pack"|"--builder", "s2i"|' ./e2e/e2e_*.go
 sed -i 's|--builder=pack|--builder=s2i|' ./e2e/e2e_*.go
 
