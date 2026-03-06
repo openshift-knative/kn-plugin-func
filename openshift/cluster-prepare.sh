@@ -40,12 +40,6 @@ if [ "$INSTALL_PIPELINES" == "true" ] ; then
   wait_until_pods_running openshift-pipelines
 fi
 
- # TEMPORARY WORKAROUND: Disable affinity assistant to prevent pod scheduling issues
-subheader "Disabling affinity assistant (temporary workaround)"
-oc patch configmap feature-flags -n openshift-pipelines \
-  -p '{"data":{"disable-affinity-assistant":"true", "coschedule":"disabled"}}' \
-  --type=merge
-
 # Patch domain template to match tests check
 oc patch -n knative-serving cm/config-network --patch '{"data":{"domain-template":"{{.Name}}-{{.Namespace}}-ksvc.{{.Domain}}"}}'
 
