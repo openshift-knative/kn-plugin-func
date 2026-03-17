@@ -1,5 +1,14 @@
 version: 2
 updates:
+    - package-ecosystem: github-actions
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      target-branch: release-v1.15
+      commit-message:
+        prefix: '[release-v1.15][github-actions]'
+      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -90,6 +99,15 @@ updates:
       commit-message:
         prefix: '[release-v1.15][maven]'
       open-pull-requests-limit: 10
+    - package-ecosystem: github-actions
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      target-branch: release-v1.16
+      commit-message:
+        prefix: '[release-v1.16][github-actions]'
+      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -180,6 +198,15 @@ updates:
       commit-message:
         prefix: '[release-v1.16][maven]'
       open-pull-requests-limit: 10
+    - package-ecosystem: github-actions
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      target-branch: release-v1.17
+      commit-message:
+        prefix: '[release-v1.17][github-actions]'
+      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -270,6 +297,15 @@ updates:
       commit-message:
         prefix: '[release-v1.17][maven]'
       open-pull-requests-limit: 10
+    - package-ecosystem: github-actions
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      target-branch: release-v1.21
+      commit-message:
+        prefix: '[release-v1.21][github-actions]'
+      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
