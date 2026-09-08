@@ -7,8 +7,7 @@ metadata:
   name: kn-plugin-func-func-util-116
 spec:
   componentName: kn-plugin-func-func-util-116
-  application: serverless-operator-136
-   
+  application: serverless-operator-136 
   source:
     git:
       url: https://github.com/openshift-knative/kn-plugin-func.git
