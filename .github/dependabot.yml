@@ -1,113 +1,5 @@
 version: 2
 updates:
-    - package-ecosystem: github-actions
-      directories:
-        - /
-      schedule:
-        interval: weekly
-      target-branch: release-v1.15
-      commit-message:
-        prefix: '[release-v1.15][github-actions]'
-      open-pull-requests-limit: 0
-    - package-ecosystem: gomod
-      directories:
-        - /
-      schedule:
-        interval: weekly
-      ignore:
-        - dependency-name: knative.dev/*
-        - dependency-name: k8s.io/*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-        - dependency-name: github.com/openshift/*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-        - dependency-name: sigs.k8s.io/controller-runtime
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-        - dependency-name: istio.io/*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-      groups:
-        major:
-            update-types:
-                - major
-            applies-to: version-updates
-        minor:
-            update-types:
-                - minor
-            applies-to: version-updates
-        patch:
-            update-types:
-                - patch
-            applies-to: version-updates
-        security:
-            update-types:
-                - patch
-                - minor
-                - major
-            applies-to: security-updates
-      target-branch: release-v1.15
-      commit-message:
-        prefix: '[release-v1.15][gomod]'
-      open-pull-requests-limit: 10
-    - package-ecosystem: maven
-      directories:
-        - /templates/quarkus/http
-        - /templates/quarkus/cloudevents
-        - /templates/springboot/http
-        - /templates/springboot/cloudevents
-      schedule:
-        interval: weekly
-      ignore:
-        - dependency-name: io.quarkus*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-        - dependency-name: com.redhat.quarkus.platform*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-        - dependency-name: io.vertx*
-          update-types:
-            - version-update:semver-major
-            - version-update:semver-minor
-      groups:
-        major:
-            update-types:
-                - major
-            applies-to: version-updates
-        minor:
-            update-types:
-                - minor
-            applies-to: version-updates
-        patch:
-            update-types:
-                - patch
-            applies-to: version-updates
-        security:
-            update-types:
-                - patch
-                - minor
-                - major
-            applies-to: security-updates
-      target-branch: release-v1.15
-      commit-message:
-        prefix: '[release-v1.15][maven]'
-      open-pull-requests-limit: 10
-    - package-ecosystem: github-actions
-      directories:
-        - /
-      schedule:
-        interval: weekly
-      target-branch: release-v1.16
-      commit-message:
-        prefix: '[release-v1.16][github-actions]'
-      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -198,15 +90,6 @@ updates:
       commit-message:
         prefix: '[release-v1.16][maven]'
       open-pull-requests-limit: 10
-    - package-ecosystem: github-actions
-      directories:
-        - /
-      schedule:
-        interval: weekly
-      target-branch: release-v1.17
-      commit-message:
-        prefix: '[release-v1.17][github-actions]'
-      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -297,15 +180,6 @@ updates:
       commit-message:
         prefix: '[release-v1.17][maven]'
       open-pull-requests-limit: 10
-    - package-ecosystem: github-actions
-      directories:
-        - /
-      schedule:
-        interval: weekly
-      target-branch: release-v1.21
-      commit-message:
-        prefix: '[release-v1.21][github-actions]'
-      open-pull-requests-limit: 0
     - package-ecosystem: gomod
       directories:
         - /
@@ -395,4 +269,184 @@ updates:
       target-branch: release-v1.21
       commit-message:
         prefix: '[release-v1.21][maven]'
+      open-pull-requests-limit: 10
+    - package-ecosystem: gomod
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      ignore:
+        - dependency-name: knative.dev/*
+        - dependency-name: k8s.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: github.com/openshift/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: sigs.k8s.io/controller-runtime
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            applies-to: version-updates
+        minor:
+            update-types:
+                - minor
+            applies-to: version-updates
+        patch:
+            update-types:
+                - patch
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            applies-to: security-updates
+      target-branch: release-v1.22
+      commit-message:
+        prefix: '[release-v1.22][gomod]'
+      open-pull-requests-limit: 10
+    - package-ecosystem: maven
+      directories:
+        - /templates/quarkus/http
+        - /templates/quarkus/cloudevents
+        - /templates/springboot/http
+        - /templates/springboot/cloudevents
+      schedule:
+        interval: weekly
+      ignore:
+        - dependency-name: io.quarkus*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: com.redhat.quarkus.platform*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: io.vertx*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            applies-to: version-updates
+        minor:
+            update-types:
+                - minor
+            applies-to: version-updates
+        patch:
+            update-types:
+                - patch
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            applies-to: security-updates
+      target-branch: release-v1.22
+      commit-message:
+        prefix: '[release-v1.22][maven]'
+      open-pull-requests-limit: 10
+    - package-ecosystem: gomod
+      directories:
+        - /
+      schedule:
+        interval: weekly
+      ignore:
+        - dependency-name: knative.dev/*
+        - dependency-name: k8s.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: github.com/openshift/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: sigs.k8s.io/controller-runtime
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: istio.io/*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            applies-to: version-updates
+        minor:
+            update-types:
+                - minor
+            applies-to: version-updates
+        patch:
+            update-types:
+                - patch
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            applies-to: security-updates
+      target-branch: release-v1.23
+      commit-message:
+        prefix: '[release-v1.23][gomod]'
+      open-pull-requests-limit: 10
+    - package-ecosystem: maven
+      directories:
+        - /templates/quarkus/http
+        - /templates/quarkus/cloudevents
+        - /templates/springboot/http
+        - /templates/springboot/cloudevents
+      schedule:
+        interval: weekly
+      ignore:
+        - dependency-name: io.quarkus*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: com.redhat.quarkus.platform*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+        - dependency-name: io.vertx*
+          update-types:
+            - version-update:semver-major
+            - version-update:semver-minor
+      groups:
+        major:
+            update-types:
+                - major
+            applies-to: version-updates
+        minor:
+            update-types:
+                - minor
+            applies-to: version-updates
+        patch:
+            update-types:
+                - patch
+            applies-to: version-updates
+        security:
+            update-types:
+                - patch
+                - minor
+                - major
+            applies-to: security-updates
+      target-branch: release-v1.23
+      commit-message:
+        prefix: '[release-v1.23][maven]'
       open-pull-requests-limit: 10
