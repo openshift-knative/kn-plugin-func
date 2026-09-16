@@ -351,7 +351,10 @@ func TestTemplates_ModeRemote(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if file.Mode() != os.ModeDir|0755 {
+	// Mask the setgid bit: some environments (e.g. OpenShift CI) run with a
+	// setgid parent directory, which Linux propagates to newly created
+	// subdirectories. That bit is irrelevant to what this test verifies.
+	if file.Mode()&^os.ModeSetgid != os.ModeDir|0755 {
 		t.Fatalf("The remote repositry directory mode should be 0755 but was %#o", file.Mode())
 	}
 
