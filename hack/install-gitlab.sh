@@ -53,7 +53,7 @@ metadata:
 spec:
   containers:
     - name: gitlab
-      image: gitlab/gitlab-ce:latest
+      image: gitlab/gitlab-ce:19.1.2-ce.0
       volumeMounts:
         - name: gitlab
           subPath: config
