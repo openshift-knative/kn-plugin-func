@@ -14,8 +14,7 @@ jobs:
       - name: Install Bash 4 on Mac
         if: matrix.os == 'macos-latest'
         run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew update
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"        
 
           brew install bash
           brew install gnu-sed
