@@ -113,10 +113,10 @@ git remote add origin git@github.com:my-repo/my-function.git
 4. Update the Function configuration in `func.yaml` to enable on cluster builds for the Git repository:
 ```yaml
 build:
-  git:
+  source:
     url: https://github.com/my-repo/my-function.git   # required, git repository with the function source code
-    revision: main                                    # optional, git revision to be used (branch, tag, commit)
-    # contextDir: myfunction                          # optional, needed only if the function is not located in the repository root folder
+    revision: main                                    # optional, git revision to build (branch, tag, commit)
+    # dir: myfunction                                 # optional, needed only if the function is not located in the repository root folder
   buildpacks: []
   builder: ""
   buildEnvs: []

@@ -1695,7 +1695,7 @@ func TestDeploy_RemoteBuildURLPermutations(t *testing.T) {
 				// TODO: (enhancement) allow --source when running local deployment.
 				// Check that the local builder is invoked with a directive to use a
 				// git repo rather than the local filesystem if building is enabled and
-				// a url is provided.  For now it throws an error statign that source
+				// a url is provided.  For now it throws an error stating that source
 				// is only used when --remote
 				if url != "" && err == nil {
 					t.Fatal("error expected when deploying from local but provided --source")
