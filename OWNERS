@@ -3,10 +3,8 @@
 # DO NOT EDIT! File generated via https://github.com/openshift-knative/hack/tree/main/config.
 
 approvers:
-- creydr
 - dsimansk
 - gauron99
-- Kaustubh-pande
 - Kaustubh-pande
 - lkingland
 - maschmid
