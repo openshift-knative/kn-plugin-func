@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"regexp"
@@ -111,6 +112,18 @@ func GetRegistry(img string) (string, error) {
 	return registry, nil
 }
 
+// isInClusterRegistry reports whether registry is a Kubernetes in-cluster
+// service address (host ending in .svc or .svc.cluster.local), which resolves
+// only from within the cluster. Pushing to such an address requires the
+// in-cluster dialer; the container daemon cannot resolve the name.
+func isInClusterRegistry(registry string) bool {
+	host := registry
+	if h, _, err := net.SplitHostPort(registry); err == nil {
+		host = h
+	}
+	return strings.HasSuffix(host, ".svc") || strings.HasSuffix(host, ".svc.cluster.local")
+}
+
 // Push the image index of the function.
 func (n *Pusher) Push(ctx context.Context, f fn.Function) (string, error) {
 	credentials, err := n.credentialsProvider(ctx, f.Build.Image)
@@ -202,7 +215,15 @@ func (n *Pusher) pushImage(ctx context.Context, f fn.Function, credentials Crede
 		return digest, nil
 	}
 	errStr := err.Error()
-	if strings.Contains(errStr, "no such host") ||
+	// An in-cluster registry service address (…svc / …svc.cluster.local) only
+	// resolves inside the cluster, so the container daemon cannot reach it and
+	// the push must go through the in-cluster dialer. We trigger that fallback
+	// on the target address rather than the daemon's error text: podman reports
+	// the name-resolution failure as an empty "Error response from daemon:"
+	// message (unlike docker's "no such host"), so string matching alone misses
+	// it. See the host-based check below alongside the name-resolution matches.
+	if isInClusterRegistry(registry) ||
+		strings.Contains(errStr, "no such host") ||
 		strings.Contains(errStr, "failure in name resolution") ||
 		regexp.MustCompile(`lookup .*: server misbehaving`).MatchString(errStr) {
 		// push with custom transport to be able to push into cluster private registries
