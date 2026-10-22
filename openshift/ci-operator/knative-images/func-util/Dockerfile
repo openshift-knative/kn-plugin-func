@@ -1,5 +1,5 @@
 # DO NOT EDIT! Generated Dockerfile for cmd/func-util.
-ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.25-openshift-4.21
+ARG GO_BUILDER=registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.26-openshift-4.23
 ARG GO_RUNTIME=registry.access.redhat.com/ubi9/ubi-minimal
 
 FROM $GO_BUILDER as builder
@@ -15,7 +15,7 @@ RUN go build -tags strictfipsruntime,exclude_graphdriver_btrfs -o /usr/bin/main 
 
 FROM $GO_RUNTIME
 
-ARG VERSION=knative-nightly
+ARG VERSION=knative-v1.23
 
 RUN microdnf install -y socat tar
 
@@ -41,6 +41,6 @@ LABEL \
       io.openshift.tags="func-util" \
       vendor="Red Hat, Inc." \
       release=$VERSION \
-      cpe="cpe:/a:redhat:openshift_serverless:::el9"
+      cpe="cpe:/a:redhat:openshift_serverless:1.40::el9"
 
 ENTRYPOINT ["/usr/bin/bash"]
